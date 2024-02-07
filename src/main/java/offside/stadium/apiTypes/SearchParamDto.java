@@ -1,13 +1,15 @@
 package offside.stadium.apiTypes;
 
-public class LocationRangeDto {
+public class SearchParamDto {
+    String category;
     String startX;
     String startY;
     
     String endX;
     String endY;
     
-    public LocationRangeDto(String startX, String startY, String endX, String endY) {
+    public SearchParamDto(String category, String startX, String startY, String endX, String endY) {
+        this.category = category;
         this.startX = startX;
         this.startY = startY;
         this.endX = endX;

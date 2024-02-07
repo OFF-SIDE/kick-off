@@ -3,6 +3,7 @@ package offside.stadium.controller;
 import java.util.List;
 import offside.stadium.apiTypes.CreateStadiumByCrawlerDto;
 import offside.stadium.apiTypes.LocationRangeDto;
+import offside.stadium.apiTypes.SearchParamDto;
 import offside.stadium.service.StadiumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -38,7 +39,7 @@ public class StadiumController {
     
     @GetMapping("stadium")
     @ResponseBody
-    public void getStadiumListByCategoryOrLocation(@RequestParam("category") String category, @RequestParam("location") LocationRangeDto locationRange){
+    public void getStadiumListByCategoryOrLocation(@RequestParam() SearchParamDto searchParamData){
         // 0. 유효성 검사
         // - category는 무조건 와야함
         // - locationRange도 무조건 와야함
