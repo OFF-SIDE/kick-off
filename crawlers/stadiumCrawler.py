@@ -4,7 +4,7 @@ import time
 import datetime
 
 def postStadium(data):
-    url = 'http://13.209.73.252:8080/stadium'  # API 엔드포인트 URL
+    url = 'http://localhost:8080/stadium'  # API 엔드포인트 URL
 
     # POST 요청 보내기
     response = requests.post(url, data=json.dumps(data), headers={'Content-Type': 'application/json'})
@@ -12,6 +12,7 @@ def postStadium(data):
     # 응답 확인
     if response.status_code == 200:  # 성공적인 응답을 받았을 때
         result = response.json()  # JSON 형태로 응답 데이터 가져오기
+        print(result)
     else:
         print("API 요청 실패:", response.text)
 
@@ -26,7 +27,6 @@ def getStadiumDataFromPublicApi():
 
 def assertDateValidation(inputDate):
     today = int(datetime.date.today().strftime("%Y-%m-%d").replace("-",""))
-    print(today)
     inputDate = int(inputDate.replace("-",""))
 
     if inputDate < today :
@@ -40,13 +40,8 @@ def stadiumAppend(sendDataList, dataToInsert):
     st = l - 10 if l > 10 else 0
 
     for i in range(st, l):
-        if (sendDataList[i]["X"] == dataToInsert["X"] and sendDataList[i]["Y"] == dataToInsert["Y"] and sendDataList[i]["category"] == dataToInsert["category"]) or (sendDataList[i]["name"] == dataToInsert["name"] and sendDataList[i]["category"] == dataToInsert["category"]):
-            sendDataList[i]["subName"].append(dataToInsert["subName"][0])
-            sendDataList[i]["link"].append(dataToInsert["link"][0])
-            sendDataList[i]["externalId"].append(dataToInsert["externalId"][0])
-            sendDataList[i]["openDay"].append(dataToInsert["openDay"][0])
-            sendDataList[i]["closeDay"].append(dataToInsert["closeDay"][0])
-            sendDataList[i]["status"].append(dataToInsert["status"][0])
+        if (sendDataList[i]["stadium"]["X"] == dataToInsert["stadium"]["X"] and sendDataList[i]["stadium"]["Y"] == dataToInsert["stadium"]["Y"] and sendDataList[i]["stadium"]["category"] == dataToInsert["stadium"]["category"]) or (sendDataList[i]["stadium"]["name"] == dataToInsert["stadium"]["name"] and sendDataList[i]["stadium"]["category"] == dataToInsert["stadium"]["category"]):
+            sendDataList[i]["stadiumInfoList"].append(dataToInsert["stadiumInfoList"][0])
             isInserted = True
             break
 
@@ -60,30 +55,38 @@ if __name__ == "__main__":
     sendDataList = []
 
     # 읽어온 데이터 삽입
-    for i in range(dataLength):
+    for i in range(20):
         try:
             if assertDateValidation(resultData[i]["RCPTENDDT"][:10]):
                 body = dict()
-                body["name"] = resultData[i]["PLACENM"]
-                body["location"] = resultData[i]["AREANM"]
-                body["contactPhone"] = resultData[i]["TELNO"]
-                body["subName"] = [resultData[i]["SVCNM"]]
-                body["comment"] = resultData[i]["DTLCONT"][:1024]
-                body["category"] = resultData[i]["MINCLASSNM"]
-                body["price"] = resultData[i]["PAYATNM"]
-                body["image"] = resultData[i]["IMGURL"]
-                body["link"] = [resultData[i]["SVCURL"]]
-                body["X"] =  resultData[i]["X"]
-                body["Y"] =  resultData[i]["Y"]
-                body["externalId"] = [resultData[i]["SVCID"]]
-                body["openAt"] = resultData[i]["V_MIN"]
-                body["closeAt"] = resultData[i]["V_MAX"]
-                body["openDay"] = resultData[i]["RCPTBGNDT"]
-                body["closeDay"] = resultData[i]["RCPTENDDT"]
-                body["status"] = resultData[i]["SVCSTATNM"]
+
+                stadium = dict()
+                # stadium
+                stadium["name"] = resultData[i]["PLACENM"]
+                stadium["location"] = resultData[i]["AREANM"]
+                stadium["contactPhone"] = resultData[i]["TELNO"]
+                stadium["comment"] = resultData[i]["DTLCONT"][:1024]
+                stadium["category"] = resultData[i]["MINCLASSNM"]
+                stadium["price"] = resultData[i]["PAYATNM"]
+                stadium["image"] = resultData[i]["IMGURL"]
+                stadium["X"] =  resultData[i]["X"]
+                stadium["Y"] =  resultData[i]["Y"]
+                stadium["openAt"] = resultData[i]["V_MIN"]
+                stadium["closeAt"] = resultData[i]["V_MAX"]
+                # stadium_info
+                stadiumInfoList = dict()
+                stadiumInfoList["externalId"] = resultData[i]["SVCID"]
+                stadiumInfoList["subName"] = resultData[i]["SVCNM"]
+                stadiumInfoList["status"] = True if resultData[i]["SVCSTATNM"] == "접수중" else False
+                stadiumInfoList["link"] = resultData[i]["SVCURL"]
+                stadiumInfoList["openDay"] = resultData[i]["RCPTBGNDT"]
+                stadiumInfoList["closeDay"] = resultData[i]["RCPTENDDT"]
+
+                body["stadium"] = stadium
+                body["stadiumInfoList"] = [stadiumInfoList]
 
                 stadiumAppend(sendDataList, body)
         except Exception as e:    # 모든 예외의 에러 메시지를 출력할 때는 Exception을 사용
             print('예외가 발생했습니다.', e)
 
-    print(sendDataList)
+    postStadium(sendDataList)

@@ -41,3 +41,6 @@ src/main/resources/*.properties
 
 ### Image
 src/main/resources/static/image/*
+
+crawlers/input.json
+crawlers/result.json
