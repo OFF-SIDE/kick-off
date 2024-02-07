@@ -1,4 +1,4 @@
-package offside.stadium.dto;
+package offside.stadium.apiTypes;
 
 import java.util.List;
 

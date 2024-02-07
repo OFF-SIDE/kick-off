@@ -1,4 +1,4 @@
-package offside.stadium.dto;
+package offside.stadium.apiTypes;
 
 public class LocationRangeDto {
     String startX;

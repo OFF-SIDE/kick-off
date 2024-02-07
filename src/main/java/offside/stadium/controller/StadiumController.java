@@ -1,8 +1,8 @@
 package offside.stadium.controller;
 
 import java.util.List;
-import offside.stadium.dto.CreateStadiumByCrawlerDto;
-import offside.stadium.dto.LocationRangeDto;
+import offside.stadium.apiTypes.CreateStadiumByCrawlerDto;
+import offside.stadium.apiTypes.LocationRangeDto;
 import offside.stadium.service.StadiumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -49,7 +49,7 @@ public class StadiumController {
     @GetMapping("stadium/search")
     @ResponseBody
     public void getStadiumListBySearchName(@RequestParam("name") String searchName){
-        // 1. 해당 이름으로 시작하는 구장이 있는지 return (stadium만 가져오기)
+        // 1. 해당 이름이 포함되어 있는 구장이 있는지 return (stadium만 가져오기)
     }
     
     @GetMapping("stadium/{stadiumId}")
