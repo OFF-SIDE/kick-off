@@ -55,7 +55,7 @@ if __name__ == "__main__":
     sendDataList = []
 
     # 읽어온 데이터 삽입
-    for i in range(20):
+    for i in range(dataLength):
         try:
             if assertDateValidation(resultData[i]["RCPTENDDT"][:10]):
                 body = dict()
