@@ -15,6 +15,7 @@ public class Stadium{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     private String location;
     private String contactPhone;
     private String name;
@@ -24,10 +25,14 @@ public class Stadium{
     private String category;
     private String image;
     private String price;
+
+    @ColumnDefault("0")
     private int totalRating;
+    @ColumnDefault("0")
     private int ratingPeople;
-    
+    @ColumnDefault("0")
     private int visitor;
+
     private float X;
     private float Y;
     private String openAt;

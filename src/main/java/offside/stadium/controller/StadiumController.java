@@ -35,6 +35,9 @@ public class StadiumController {
 //            stadiumService.createNewStadium(newStadium);
 //        }
         // 2. stadiumList. stadiumInfo 들을 삽입한다.
+        List<Stadium> createStadiumList = stadiumList.stream().map(stadiumDto -> new Stadium(stadiumDto.stadium)).toList();
+        stadiumRepository.saveAll(createStadiumList);
+
         // 2-a. 1-a였다면, 그냥 info를 다 삽입한다. (with 1-a에서 받아온 stadiumId와 함께)
         // 2-b. 1-b였다면, 기존 stadiumInfo을 다 삭제하고 새로 덮어씌운다
         
