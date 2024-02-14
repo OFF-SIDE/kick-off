@@ -9,8 +9,8 @@ public class CreateStadiumDto {
     public String category;
     public String price;
     public String image;
-    public String X;
-    public String Y;
+    public float X;
+    public float Y;
     public String openAt;
     public String closeAt;
     
@@ -27,6 +27,94 @@ public class CreateStadiumDto {
         this.X = x;
         this.Y = y;
         this.openAt = openAt;
+        this.closeAt = closeAt;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getContactPhone() {
+        return contactPhone;
+    }
+
+    public void setContactPhone(String contactPhone) {
+        this.contactPhone = contactPhone;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public float getX() {
+        return X;
+    }
+
+    public void setX(float x) {
+        X = x;
+    }
+
+    public float getY() {
+        return Y;
+    }
+
+    public void setY(float y) {
+        Y = y;
+    }
+
+    public String getOpenAt() {
+        return openAt;
+    }
+
+    public void setOpenAt(String openAt) {
+        this.openAt = openAt;
+    }
+
+    public String getCloseAt() {
+        return closeAt;
+    }
+
+    public void setCloseAt(String closeAt) {
         this.closeAt = closeAt;
     }
 }
