@@ -1,11 +1,21 @@
 package offside.stadium.apiTypes;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+
 public class SearchParamDto {
-    String category;
-    float startX;
-    float startY;
     
+    @NotBlank(message = "종목을 선택해주세요!")
+    String category;
+    
+    @NotNull(message = "시작하는 X가 필요합니다.")
+    float startX;
+    @NotNull(message = "시작하는 Y가 필요합니다.")
+    float startY;
+    @NotNull(message = "끝나는 X가 필요합니다.")
     float endX;
+    @NotNull(message = "끝나는 Y가 필요합니다.")
     float endY;
     
     public SearchParamDto(String category, float startX, float startY, float endX, float endY) {

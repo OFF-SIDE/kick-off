@@ -19,7 +19,7 @@ public class Stadium{
     private String location;
     private String contactPhone;
     private String name;
-    @Column(length = 512)
+    @Column(length = 1024)
     private String comment;
     
     private String category;

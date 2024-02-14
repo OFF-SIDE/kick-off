@@ -3,6 +3,7 @@ package offside.stadium.apiTypes;
 import java.util.List;
 
 public class CreateStadiumByCrawlerDto {
+    
     public CreateStadiumDto stadium;
     public List<CreateStadiumInfoDto> stadiumInfoList;
     
