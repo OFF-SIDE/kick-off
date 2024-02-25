@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -29,45 +28,32 @@ public class StadiumService {
     
     /**
           * @summary 구장과 해당 구장 정보를 최신화하는 함수
-          * @param stadium
+          * @param stadiumData
           * @param stadiumInfoDtoList
           */
-    public void createNewStadiumByCrawler(CreateStadiumDto stadium, List<CreateStadiumInfoDto> stadiumInfoDtoList){
-        // 1. 이미 있을 수도 있음
-        // 1-a 있으면
-        // final var existStadium = stadiumRepository.findByXandY();
-        // if(existStadium.isEmpty()) -> 구장 삽입
-        // else
-        //      -> 있는 거 Id 쓰기
-        //      -> 기존 stadiumInfo 들 싹다 지우기
-        
-        // 1-b 없으면
-        final var createdStadium = stadiumRepository.save(new Stadium(stadium));
-        
-        List<StadiumInfo> stadiumInfoList = stadiumInfoDtoList.stream().map((stadiumInfoDto) -> new StadiumInfo(createdStadium.getId(), stadiumInfoDto)).toList();
-        stadiumInfoRepository.saveAll(stadiumInfoList);
+    public void createNewStadiumByCrawler(CreateStadiumDto stadiumData, List<CreateStadiumInfoDto> stadiumInfoDtoList){
+         final var stadium = stadiumRepository.findByXAndYAndCategory(stadiumData.getX(), stadiumData.getY(), stadiumData.getCategory()); // 구장 이미 있나 확인
+         if(stadium.isEmpty()){ // 없으면 -> 새로 생성
+             final var newStadium = stadiumRepository.save(new Stadium(stadiumData));
+             final var stadiumInfoList = stadiumInfoDtoList.stream().map((stadiumInfoDto) -> new StadiumInfo(newStadium.getId(), stadiumInfoDto)).toList();
+             stadiumInfoRepository.saveAll(stadiumInfoList);
+         } else { // 있으면 -> 기존 Info 다 지우고 업데이트
+             stadiumInfoRepository.deleteAllByStadiumId(stadium.get().getId());
+             final var stadiumInfoList = stadiumInfoDtoList.stream().map((stadiumInfoDto) -> new StadiumInfo(stadium.get().getId(), stadiumInfoDto)).toList();
+             stadiumInfoRepository.saveAll(stadiumInfoList);
+         }
     }
 //
     public List<Stadium> getStadiumListBySearch(String searchName){
-        return stadiumRepository.findEntitiesBySearchName(searchName);
+        return stadiumRepository.findAllBySearchName(searchName);
     }
     public List<Stadium> getStadiumListByCategoryAndLocation(SearchParamDto searchParamData){
         float startX = searchParamData.getStartX();
         float startY = searchParamData.getStartY();
         float endX = searchParamData.getEndX();
         float endY = searchParamData.getEndY();
-        String category = searchParamData.getCategory();
-    
-        System.out.println(category);
-        System.out.println(startX);
-        System.out.println(startY);
-        System.out.println(endX);
-        System.out.println(endY);
-        
-        return stadiumRepository.findEntitiesBetweenValues(category,startX,endX,startY,endY);
+        final var category = searchParamData.getCategory();
+
+        return stadiumRepository.findAllBetweenLocationAndByCategory(category,startX,endX,startY,endY);
     }
-//
-//    public Optional<Stadium> gotoStadiumInformation(Integer stadiumId){
-//        return stadiumRepository.findById(stadiumId);
-//    }
 }

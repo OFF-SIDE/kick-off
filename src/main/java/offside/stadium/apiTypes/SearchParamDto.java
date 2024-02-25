@@ -8,7 +8,6 @@ public class SearchParamDto {
     
     @NotBlank(message = "종목을 선택해주세요!")
     String category;
-    
     @NotNull(message = "시작하는 X가 필요합니다.")
     float startX;
     @NotNull(message = "시작하는 Y가 필요합니다.")

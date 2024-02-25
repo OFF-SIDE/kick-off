@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @Transactional
-public interface StadiumInfoRepository extends JpaRepository<StadiumInfo, Integer>  {}
+public interface StadiumInfoRepository extends JpaRepository<StadiumInfo, Integer>  {
+    void deleteAllByStadiumId(int stadiumId);
+}

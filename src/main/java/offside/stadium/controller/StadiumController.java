@@ -1,13 +1,9 @@
 package offside.stadium.controller;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import java.util.concurrent.atomic.AtomicInteger;
 import offside.stadium.apiTypes.CreateStadiumByCrawlerDto;
 import offside.stadium.apiTypes.SearchParamDto;
 import offside.stadium.domain.Stadium;
-import offside.stadium.domain.StadiumInfo;
 import offside.stadium.repository.StadiumInfoRepository;
 import offside.stadium.repository.StadiumRepository;
 import offside.stadium.service.StadiumService;
@@ -31,31 +27,19 @@ public class StadiumController {
         this.stadiumService = stadiumService;
     }
     
-    @PostMapping("/stadium")
+    @PostMapping("/stadium/crawler")
     @ResponseBody
     public String createStadiumByCrawler(@RequestBody() List<CreateStadiumByCrawlerDto> stadiumList){
-        // 1. stadiumList.stadium 이 이미 있는지 확인한다. (같은지 확인 = stadium 디비에 X,Y값을 비교하는 것)
-        // 1-a. 만약 없다면 stadium을 삽입한다. -> stadiumId 가져오기
-        // 1-b, 있으면, 그대로 둔다. -> stadiumId 가져오기
-//        if(stadiumRepository.findAllByXAndY(newStadium.stadium.getX(), newStadium.stadium.getY()).isEmpty()){
-//            stadiumService.createNewStadium(newStadium);
-//        }
-        // 2. stadiumList. stadiumInfo 들을 삽입한다.
         stadiumList.forEach((stadium)-> {
             this.stadiumService.createNewStadiumByCrawler(stadium.stadium, stadium.stadiumInfoList);
         });
         
-        return "성공했어요";
+        return "약 " + stadiumList.size() + "건의 구장 데이터 입력이 성공했습니다.";
     }
     
     @GetMapping("stadium")
     @ResponseBody
     public List<Stadium> getStadiumListByCategoryOrLocation(SearchParamDto searchParamData, BindingResult bindingResult){
-    
-        System.out.println("hihi");
-        // 0. 유효성 검사
-        // - category는 무조건 와야함
-        // - locationRange도 무조건 와야함
         if(bindingResult.hasErrors()){
             throw new IllegalArgumentException(bindingResult.getFieldError().getDefaultMessage());
         }

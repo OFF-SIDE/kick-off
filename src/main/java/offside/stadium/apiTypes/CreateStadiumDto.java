@@ -8,8 +8,8 @@ public class CreateStadiumDto {
     public String category;
     public String price;
     public String image;
-    public float X;
-    public float Y;
+    public float x;
+    public float y;
     public String openAt;
     public String closeAt;
     
@@ -23,8 +23,8 @@ public class CreateStadiumDto {
         this.category = category;
         this.price = price;
         this.image = image;
-        this.X = x;
-        this.Y = y;
+        this.x = x;
+        this.y = y;
         this.openAt = openAt;
         this.closeAt = closeAt;
     }
@@ -86,19 +86,19 @@ public class CreateStadiumDto {
     }
 
     public float getX() {
-        return X;
+        return x;
     }
 
     public void setX(float x) {
-        X = x;
+        x = x;
     }
 
     public float getY() {
-        return Y;
+        return y;
     }
 
     public void setY(float y) {
-        Y = y;
+        y = y;
     }
 
     public String getOpenAt() {
