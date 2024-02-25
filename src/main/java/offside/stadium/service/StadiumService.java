@@ -51,7 +51,7 @@ public class StadiumService {
     public List<Stadium> getStadiumListBySearch(String searchName){
         return stadiumRepository.findEntitiesBySearchName(searchName);
     }
-    public List<Stadium> getStadiumListByCategoryAndLocation(SearchParamDto searchParamData){
+    public List<Stadium> getStadiumListByMap(SearchParamDto searchParamData){
         float startX = searchParamData.getStartX();
         float startY = searchParamData.getStartY();
         float endX = searchParamData.getEndX();
@@ -65,6 +65,10 @@ public class StadiumService {
         System.out.println(endY);
         
         return stadiumRepository.findEntitiesBetweenValues(category,startX,endX,startY,endY);
+    }
+    public List<Stadium> getStadiumListByCategoryAndLocation(String category, List<String> location){
+        return stadiumRepository.findAllByLocationAndCategory(category,location);
+                //리스트로 들어온 지역에 따른 검색 결과 레포지토리에서 반환???
     }
 //
 //    public Optional<Stadium> gotoStadiumInformation(Integer stadiumId){

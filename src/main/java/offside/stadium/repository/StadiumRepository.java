@@ -20,5 +20,6 @@ public interface StadiumRepository extends JpaRepository<Stadium, Integer> {
     
     @Query("SELECT e FROM Stadium e WHERE e.name LIKE %:searchName%")
     List<Stadium> findEntitiesBySearchName(@Param("searchName") String searchName);
+    List<Stadium> findAllByLocationAndCategory(String category, List<String> location);
 //    Optional<Stadium> findById(Integer id);
 }

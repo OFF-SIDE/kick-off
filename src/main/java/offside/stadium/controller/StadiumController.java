@@ -50,7 +50,7 @@ public class StadiumController {
     
     @GetMapping("stadium")
     @ResponseBody
-    public List<Stadium> getStadiumListByCategoryOrLocation(SearchParamDto searchParamData, BindingResult bindingResult){
+    public List<Stadium> getStadiumListByMap(SearchParamDto searchParamData, BindingResult bindingResult){
     
         System.out.println("hihi");
         // 0. 유효성 검사
@@ -61,7 +61,7 @@ public class StadiumController {
         }
         
         // 1. 해당 범위내에 category가 맞는 구장들 return (stadium만 가져오기)
-        return stadiumService.getStadiumListByCategoryAndLocation(searchParamData);
+        return stadiumService.getStadiumListByMap(searchParamData);
     }
 
     @GetMapping("stadium/search")
@@ -70,6 +70,12 @@ public class StadiumController {
         // 1. 해당 이름이 포함되어 있는 구장이 있는지 return (stadium만 가져오기)
         return stadiumService.getStadiumListBySearch(searchName);
         // 이름이 "포함"되어 있는 구장은 어떻게 찾는가?
+    }
+
+    @GetMapping("stadium")
+    @ResponseBody
+    public List<Stadium> getStadiumListByCategoryAndLocation(@RequestParam("category") String category, @RequestParam("location") List<String> location){
+        return stadiumService.getStadiumListByCategoryAndLocation(category, location);
     }
 //
 //    @GetMapping("stadium/{stadiumId}")
