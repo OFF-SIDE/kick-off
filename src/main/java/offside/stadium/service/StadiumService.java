@@ -1,7 +1,6 @@
 package offside.stadium.service;
 
 import jakarta.transaction.Transactional;
-
 import offside.stadium.apiTypes.CreateStadiumDto;
 import offside.stadium.apiTypes.CreateStadiumInfoDto;
 import offside.stadium.apiTypes.RateStadiumDto;
@@ -9,6 +8,7 @@ import offside.stadium.apiTypes.SearchParamDto;
 import offside.stadium.domain.Stadium;
 import offside.stadium.domain.StadiumInfo;
 import offside.stadium.domain.StadiumRating;
+import offside.stadium.dto.StadiumWithInfoAndRating;
 import offside.stadium.dto.StadiumWithRatingDto;
 import offside.stadium.repository.StadiumInfoRepository;
 import offside.stadium.repository.StadiumRatingRepository;
@@ -69,5 +69,15 @@ public class StadiumService {
     
     public StadiumRating rateStadium(Integer stadiumId, RateStadiumDto rateStadiumDto){
         return stadiumRatingRepository.save(new StadiumRating(stadiumId, rateStadiumDto));
+    }
+    
+    public StadiumWithInfoAndRating getStadiumInformation(Integer stadiumId){
+        final var stadium = stadiumRepository.findById(stadiumId);
+        if(stadium.isEmpty()){
+            throw new IllegalArgumentException("해당하는 구장이 없습니다");
+        }
+        final var stadiumInfoList = stadiumInfoRepository.findAllByStadiumId(stadiumId);
+        final var stadiumRateList = stadiumRatingRepository.findAllByStadiumId(stadiumId);
+        return new StadiumWithInfoAndRating(stadium.get(),stadiumInfoList,stadiumRateList);
     }
 }

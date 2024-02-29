@@ -7,6 +7,7 @@ import offside.stadium.apiTypes.RateStadiumDto;
 import offside.stadium.apiTypes.SearchParamDto;
 import offside.stadium.domain.Stadium;
 import offside.stadium.domain.StadiumRating;
+import offside.stadium.dto.StadiumWithInfoAndRating;
 import offside.stadium.dto.StadiumWithRatingDto;
 import offside.stadium.repository.StadiumInfoRepository;
 import offside.stadium.repository.StadiumRepository;
@@ -70,25 +71,12 @@ public class StadiumController {
         return stadiumRating;
     }
     
-//
-//    @GetMapping("stadium/{stadiumId}")
-//    @ResponseBody
-//    public Optional<Stadium> gotoStadiumInformation(@PathVariable("stadiumId") Integer stadiumId){
-//        // 1. 해당 구장 정보를 반환
-//        // - stadium 자체의 데이터
-//        // - stadiumInfo 에 해당하는 데이터
-//        // - stadium에 해당하는 평점(점수만)/방문자 수/즐겨찾기 수 (in stadium 테이블) (후순위 why? 유저 정보가 아직 없음)
-//        return stadiumService.gotoStadiumInformation(stadiumId);
-//    }
-//
-//    @GetMapping("stadium/{stadiumId}/rating")
-//    @ResponseBody
-//    public void getStadiumRating(@PathVariable("stadiumId") Integer stadiumId){
-//        // 해당 구장의 평가 목록을 반환
-//        // - stadium_rating 테이블을 확인 (누가 몇점을 줬는지 세부 rating 정보 반환)(후순위 Why? 어느 유저가 평가 내린지 아직은 없음)
-//    }
-//
-//
+    //구장 상세보기
+    @GetMapping("stadium/{stadiumId}")
+    @ResponseBody
+    public StadiumWithInfoAndRating getStadiumInformation(@PathVariable("stadiumId") Integer stadiumId) {
+        return stadiumService.getStadiumInformation(stadiumId);
+    }
 //
 //    @PostMapping("stadium/{stadiumId}/star")
 //    @ResponseBody
