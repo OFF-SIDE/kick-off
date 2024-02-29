@@ -7,7 +7,9 @@ import offside.stadium.apiTypes.CreateStadiumInfoDto;
 import offside.stadium.apiTypes.SearchParamDto;
 import offside.stadium.domain.Stadium;
 import offside.stadium.domain.StadiumInfo;
+import offside.stadium.dto.StadiumWithRatingDto;
 import offside.stadium.repository.StadiumInfoRepository;
+import offside.stadium.repository.StadiumRatingRepository;
 import offside.stadium.repository.StadiumRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,10 +21,12 @@ import java.util.List;
 public class StadiumService {
     private final StadiumRepository stadiumRepository;
     private final StadiumInfoRepository stadiumInfoRepository;
+    private final StadiumRatingRepository stadiumRatingRepository;
     @Autowired
-    public StadiumService(StadiumRepository stadiumRepository, StadiumInfoRepository stadiumInfoRepository) {
+    public StadiumService(StadiumRepository stadiumRepository, StadiumInfoRepository stadiumInfoRepository, StadiumRatingRepository stadiumRatingRepository) {
         this.stadiumRepository = stadiumRepository;
         this.stadiumInfoRepository = stadiumInfoRepository;
+        this.stadiumRatingRepository = stadiumRatingRepository;
     }
     
     
@@ -47,13 +51,17 @@ public class StadiumService {
     public List<Stadium> getStadiumListBySearch(String searchName){
         return stadiumRepository.findAllBySearchName(searchName);
     }
-    public List<Stadium> getStadiumListByCategoryAndLocation(SearchParamDto searchParamData){
+    public List<StadiumWithRatingDto> getStadiumListByCategoryAndLocation(SearchParamDto searchParamData){
         float startX = searchParamData.getStartX();
         float startY = searchParamData.getStartY();
         float endX = searchParamData.getEndX();
         float endY = searchParamData.getEndY();
         final var category = searchParamData.getCategory();
 
-        return stadiumRepository.findAllBetweenLocationAndByCategory(category,startX,endX,startY,endY);
+        final var StadiumList = stadiumRepository.findAllBetweenLocationAndByCategory(category,startX,endX,startY,endY);
+        return StadiumList.stream().map(stadium -> {
+            final var stadiumRatingList = stadiumRatingRepository.findAllByStadiumId(stadium.getId());
+            return new StadiumWithRatingDto(stadium, stadiumRatingList);
+        }).toList();
     }
 }

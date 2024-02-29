@@ -4,6 +4,7 @@ import java.util.List;
 import offside.stadium.apiTypes.CreateStadiumByCrawlerDto;
 import offside.stadium.apiTypes.SearchParamDto;
 import offside.stadium.domain.Stadium;
+import offside.stadium.dto.StadiumWithRatingDto;
 import offside.stadium.repository.StadiumInfoRepository;
 import offside.stadium.repository.StadiumRepository;
 import offside.stadium.service.StadiumService;
@@ -39,7 +40,7 @@ public class StadiumController {
     
     @GetMapping("stadium")
     @ResponseBody
-    public List<Stadium> getStadiumListByCategoryOrLocation(SearchParamDto searchParamData, BindingResult bindingResult){
+    public List<StadiumWithRatingDto> getStadiumListByCategoryOrLocation(SearchParamDto searchParamData, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             throw new IllegalArgumentException(bindingResult.getFieldError().getDefaultMessage());
         }
