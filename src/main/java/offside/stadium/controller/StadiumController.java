@@ -8,9 +8,7 @@ import offside.stadium.apiTypes.RangeSearchParamDto;
 import offside.stadium.apiTypes.UserRequestDto;
 import offside.stadium.domain.Stadium;
 import offside.stadium.domain.StadiumRating;
-import offside.stadium.domain.StadiumStar;
-import offside.stadium.dto.StadiumWithInfoAndRating;
-import offside.stadium.dto.StadiumWithRatingDto;
+import offside.stadium.dto.StadiumWithInfoAndRatingAndStar;
 import offside.stadium.repository.StadiumInfoRepository;
 import offside.stadium.repository.StadiumRepository;
 import offside.stadium.service.StadiumService;
@@ -46,7 +44,7 @@ public class StadiumController {
     
     @GetMapping("stadium/range")
     @ResponseBody
-    public List<StadiumWithRatingDto> getStadiumListByCategoryAndRange(RangeSearchParamDto searchParamData, BindingResult bindingResult){
+    public List<Stadium> getStadiumListByCategoryAndRange(RangeSearchParamDto searchParamData, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             throw new IllegalArgumentException(bindingResult.getFieldError().getDefaultMessage());
         }
@@ -57,7 +55,7 @@ public class StadiumController {
     
     @GetMapping("stadium/location")
     @ResponseBody
-    public List<StadiumWithRatingDto> getStadiumListByCategoryAndLocation(LocationSearchParamDto searchParamData, BindingResult bindingResult){
+    public List<Stadium> getStadiumListByCategoryAndLocation(LocationSearchParamDto searchParamData, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             throw new IllegalArgumentException(bindingResult.getFieldError().getDefaultMessage());
         }
@@ -82,12 +80,12 @@ public class StadiumController {
         final var stadiumRating = stadiumService.rateStadium(stadiumId, rateStadiumDto);
         return stadiumRating;
     }
-    
+
     //구장 상세보기
     @GetMapping("stadium/{stadiumId}")
     @ResponseBody
-    public StadiumWithInfoAndRating getStadiumInformation(@PathVariable("stadiumId") Integer stadiumId) {
-        return stadiumService.getStadiumInformation(stadiumId);
+    public StadiumWithInfoAndRatingAndStar getStadiumInformation(@PathVariable("stadiumId") Integer stadiumId, @RequestParam("userId") Integer userId) {
+        return stadiumService.getStadiumInformation(stadiumId, userId);
     }
 
     @PostMapping("stadium/{stadiumId}/star")
@@ -104,6 +102,12 @@ public class StadiumController {
         // star를 제거하는 함수 -> star가 제거되는 결과
         stadiumService.unstarStadium(userData.getUserId(), stadiumId);
         return "구장 즐겨찾기가 해제되었습니다.";
+    }
+    
+    @GetMapping("stadium/star")
+    @ResponseBody
+    public List<Stadium> getStarStadiumList(@RequestParam("userId") Integer userId){
+        return stadiumService.getStarStadiumList(userId);
     }
     
     @ExceptionHandler(IllegalArgumentException.class)

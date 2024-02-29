@@ -10,8 +10,7 @@ import offside.stadium.domain.Stadium;
 import offside.stadium.domain.StadiumInfo;
 import offside.stadium.domain.StadiumRating;
 import offside.stadium.domain.StadiumStar;
-import offside.stadium.dto.StadiumWithInfoAndRating;
-import offside.stadium.dto.StadiumWithRatingDto;
+import offside.stadium.dto.StadiumWithInfoAndRatingAndStar;
 import offside.stadium.repository.StadiumInfoRepository;
 import offside.stadium.repository.StadiumRatingRepository;
 import offside.stadium.repository.StadiumRepository;
@@ -58,39 +57,39 @@ public class StadiumService {
     public List<Stadium> getStadiumListBySearch(String searchName){
         return stadiumRepository.findAllBySearchName(searchName);
     }
-    public List<StadiumWithRatingDto> getStadiumListByCategoryAndRange(RangeSearchParamDto searchParamData){
+    public List<Stadium> getStadiumListByCategoryAndRange(RangeSearchParamDto searchParamData){
         float startX = searchParamData.getStartX();
         float startY = searchParamData.getStartY();
         float endX = searchParamData.getEndX();
         float endY = searchParamData.getEndY();
         final var category = searchParamData.getCategory();
 
-        final var StadiumList = stadiumRepository.findAllBetweenLocationAndByCategory(category,startX,endX,startY,endY);
-        return StadiumList.stream().map(stadium -> {
-            final var stadiumRatingList = stadiumRatingRepository.findAllByStadiumId(stadium.getId());
-            return new StadiumWithRatingDto(stadium, stadiumRatingList);
-        }).toList();
+        return stadiumRepository.findAllBetweenLocationAndByCategory(category,startX,endX,startY,endY);
     }
     
-    public List<StadiumWithRatingDto> getStadiumListByCategoryAndLocation(LocationSearchParamDto searchParamDto){
-        final var stadiumList = stadiumRepository.findAllByCategoryAndLocation(searchParamDto.getCategory(), searchParamDto.getLocation());
-        return stadiumList.stream().map(stadium -> {
-            return new StadiumWithRatingDto(stadium, stadiumRatingRepository.findAllByStadiumId(stadium.getId()));
-        }).toList();
+    public List<Stadium> getStadiumListByCategoryAndLocation(LocationSearchParamDto searchParamDto){
+        return stadiumRepository.findAllByCategoryAndLocation(searchParamDto.getCategory(), searchParamDto.getLocation());
     }
     
     public StadiumRating rateStadium(Integer stadiumId, RateStadiumDto rateStadiumDto){
+        final var stadium = stadiumRepository.findById(stadiumId); // 10명 40점 + 1명 5점 -> 11명 45점
+        if(stadium.isEmpty()){
+            throw new IllegalArgumentException("해당하는 구장이 없습니다.");
+        }
+        
+        stadiumRepository.updateRating(stadium.get().getId(), stadium.get().getTotalRating() + rateStadiumDto.rating, stadium.get().getRatingPeople() + 1);
         return stadiumRatingRepository.save(new StadiumRating(stadiumId, rateStadiumDto));
     }
     
-    public StadiumWithInfoAndRating getStadiumInformation(Integer stadiumId){
+    public StadiumWithInfoAndRatingAndStar getStadiumInformation(Integer stadiumId, Integer userId){
         final var stadium = stadiumRepository.findById(stadiumId);
         if(stadium.isEmpty()){
             throw new IllegalArgumentException("해당하는 구장이 없습니다");
         }
         final var stadiumInfoList = stadiumInfoRepository.findAllByStadiumId(stadiumId);
         final var stadiumRateList = stadiumRatingRepository.findAllByStadiumId(stadiumId);
-        return new StadiumWithInfoAndRating(stadium.get(),stadiumInfoList,stadiumRateList);
+        final var stadiumStar = stadiumStarRepository.findByUserIdAndStadiumId(userId, stadiumId);
+        return new StadiumWithInfoAndRatingAndStar(stadium.get(),stadiumInfoList,stadiumRateList, !stadiumStar.isEmpty());
     }
     
     public StadiumStar starStadium(Integer userId, Integer stadiumId){
@@ -103,5 +102,14 @@ public class StadiumService {
     
     public void unstarStadium(Integer userId, Integer stadiumId){
         stadiumStarRepository.deleteByUserIdAndStadiumId(userId, stadiumId);
+    }
+    
+    // 내가 좋아요한 구장 목록 : 1번구장-3.4점 , 3번구장-4.5점
+    public List<Stadium> getStarStadiumList(Integer userId){
+        final var starList = stadiumStarRepository.findAllByUserId(userId); // (userId, stadiumId) (1,3) (1,4)
+        
+        return starList.stream().map(star -> {
+            return stadiumRepository.findById(star.getStadiumId()).get();
+        }).toList();
     }
 }
