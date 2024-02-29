@@ -13,6 +13,7 @@ import java.util.Optional;
 @Transactional
 public interface StadiumRepository extends JpaRepository<Stadium, Integer> {
     Optional<Stadium> findByXAndYAndCategory(float x, float y, String category);
+    List<Stadium> findAllByCategoryAndLocation(String category, String location);
     @Query("SELECT e FROM Stadium e WHERE e.category = :category AND e.x BETWEEN :startX AND :endX AND e.y BETWEEN :startY AND :endY")
     List<Stadium> findAllBetweenLocationAndByCategory(@Param("category") String category, @Param("startX") float startX, @Param("endX") float endX, @Param("startY") float startY, @Param("endY") float endY);
     

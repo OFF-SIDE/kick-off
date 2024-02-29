@@ -1,12 +1,14 @@
 package offside.stadium.controller;
 
-import jakarta.persistence.criteria.CriteriaBuilder.In;
 import java.util.List;
 import offside.stadium.apiTypes.CreateStadiumByCrawlerDto;
+import offside.stadium.apiTypes.LocationSearchParamDto;
 import offside.stadium.apiTypes.RateStadiumDto;
-import offside.stadium.apiTypes.SearchParamDto;
+import offside.stadium.apiTypes.RangeSearchParamDto;
+import offside.stadium.apiTypes.UserRequestDto;
 import offside.stadium.domain.Stadium;
 import offside.stadium.domain.StadiumRating;
+import offside.stadium.domain.StadiumStar;
 import offside.stadium.dto.StadiumWithInfoAndRating;
 import offside.stadium.dto.StadiumWithRatingDto;
 import offside.stadium.repository.StadiumInfoRepository;
@@ -34,7 +36,7 @@ public class StadiumController {
     
     @PostMapping("/stadium/crawler")
     @ResponseBody
-    public String createStadiumByCrawler(@RequestBody() List<CreateStadiumByCrawlerDto> stadiumList){
+    public String createStadiumByCrawler(@RequestBody List<CreateStadiumByCrawlerDto> stadiumList){
         stadiumList.forEach((stadium)-> {
             this.stadiumService.createNewStadiumByCrawler(stadium.stadium, stadium.stadiumInfoList);
         });
@@ -42,14 +44,24 @@ public class StadiumController {
         return "약 " + stadiumList.size() + "건의 구장 데이터 입력이 성공했습니다.";
     }
     
-    @GetMapping("stadium")
+    @GetMapping("stadium/range")
     @ResponseBody
-    public List<StadiumWithRatingDto> getStadiumListByCategoryOrLocation(SearchParamDto searchParamData, BindingResult bindingResult){
+    public List<StadiumWithRatingDto> getStadiumListByCategoryAndRange(RangeSearchParamDto searchParamData, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             throw new IllegalArgumentException(bindingResult.getFieldError().getDefaultMessage());
         }
         
         // 1. 해당 범위내에 category가 맞는 구장들 return (stadium만 가져오기)
+        return stadiumService.getStadiumListByCategoryAndRange(searchParamData);
+    }
+    
+    @GetMapping("stadium/location")
+    @ResponseBody
+    public List<StadiumWithRatingDto> getStadiumListByCategoryAndLocation(LocationSearchParamDto searchParamData, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            throw new IllegalArgumentException(bindingResult.getFieldError().getDefaultMessage());
+        }
+        // 1. 해당 지역구에 category가 맞는 구장들 return (stadium만 가져오기)
         return stadiumService.getStadiumListByCategoryAndLocation(searchParamData);
     }
 
@@ -63,7 +75,7 @@ public class StadiumController {
     
     @PostMapping("stadium/{stadiumId}/rating")
     @ResponseBody
-    public StadiumRating rateStadium(@PathVariable("stadiumId") Integer stadiumId, @RequestBody() RateStadiumDto rateStadiumDto){
+    public StadiumRating rateStadium(@PathVariable("stadiumId") Integer stadiumId, @RequestBody RateStadiumDto rateStadiumDto){
         // 0. 해당 유저가 로그인되어 있는지 확인
         
         // 해당 유저가 해당 구장에 평점 남기기
@@ -77,13 +89,23 @@ public class StadiumController {
     public StadiumWithInfoAndRating getStadiumInformation(@PathVariable("stadiumId") Integer stadiumId) {
         return stadiumService.getStadiumInformation(stadiumId);
     }
-//
-//    @PostMapping("stadium/{stadiumId}/star")
-//    @ResponseBody
-//    public void starinStadium(){
-//        // 0. 해당 유저가 로그인되어 있는지 확인
-//        // 1. 즐겨찾기로 이미 등록되어 있으면 삭제 / 없으면 추가
-//    }
+
+    @PostMapping("stadium/{stadiumId}/star")
+    @ResponseBody
+    public String starStadium(@PathVariable("stadiumId") Integer stadiumId, @RequestBody UserRequestDto userData){
+        // star를 누르는 함수 -> star가 눌러지는 결과
+        final var star = stadiumService.starStadium(userData.getUserId(), stadiumId);
+        return "구장에 즐겨찾기가 되었습니다.";
+    }
+    
+    @PostMapping("stadium/{stadiumId}/unstar")
+    @ResponseBody
+    public String unstarStadium(@PathVariable("stadiumId") Integer stadiumId, @RequestBody UserRequestDto userData){
+        // star를 제거하는 함수 -> star가 제거되는 결과
+        stadiumService.unstarStadium(userData.getUserId(), stadiumId);
+        return "구장 즐겨찾기가 해제되었습니다.";
+    }
+    
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException exception){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
