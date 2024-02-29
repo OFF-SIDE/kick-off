@@ -1,9 +1,12 @@
 package offside.stadium.controller;
 
+import jakarta.persistence.criteria.CriteriaBuilder.In;
 import java.util.List;
 import offside.stadium.apiTypes.CreateStadiumByCrawlerDto;
+import offside.stadium.apiTypes.RateStadiumDto;
 import offside.stadium.apiTypes.SearchParamDto;
 import offside.stadium.domain.Stadium;
+import offside.stadium.domain.StadiumRating;
 import offside.stadium.dto.StadiumWithRatingDto;
 import offside.stadium.repository.StadiumInfoRepository;
 import offside.stadium.repository.StadiumRepository;
@@ -56,6 +59,17 @@ public class StadiumController {
         return stadiumService.getStadiumListBySearch(searchName);
         // 이름이 "포함"되어 있는 구장은 어떻게 찾는가?
     }
+    
+    @PostMapping("stadium/{stadiumId}/rating")
+    @ResponseBody
+    public StadiumRating rateStadium(@PathVariable("stadiumId") Integer stadiumId, @RequestBody() RateStadiumDto rateStadiumDto){
+        // 0. 해당 유저가 로그인되어 있는지 확인
+        
+        // 해당 유저가 해당 구장에 평점 남기기
+        final var stadiumRating = stadiumService.rateStadium(stadiumId, rateStadiumDto);
+        return stadiumRating;
+    }
+    
 //
 //    @GetMapping("stadium/{stadiumId}")
 //    @ResponseBody
@@ -75,13 +89,6 @@ public class StadiumController {
 //    }
 //
 //
-//    //////// 나중에 추가해도 되는 기능 //////////////
-//    @PostMapping("stadium/{stadiumId}/rating")
-//    @ResponseBody
-//    public void rateinStadium(){
-//        // 0. 해당 유저가 로그인되어 있는지 확인
-//        // 0. 해당 유저가 해당 구장을 이용했는지?
-//    }
 //
 //    @PostMapping("stadium/{stadiumId}/star")
 //    @ResponseBody

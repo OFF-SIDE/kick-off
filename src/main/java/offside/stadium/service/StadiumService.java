@@ -4,9 +4,11 @@ import jakarta.transaction.Transactional;
 
 import offside.stadium.apiTypes.CreateStadiumDto;
 import offside.stadium.apiTypes.CreateStadiumInfoDto;
+import offside.stadium.apiTypes.RateStadiumDto;
 import offside.stadium.apiTypes.SearchParamDto;
 import offside.stadium.domain.Stadium;
 import offside.stadium.domain.StadiumInfo;
+import offside.stadium.domain.StadiumRating;
 import offside.stadium.dto.StadiumWithRatingDto;
 import offside.stadium.repository.StadiumInfoRepository;
 import offside.stadium.repository.StadiumRatingRepository;
@@ -63,5 +65,9 @@ public class StadiumService {
             final var stadiumRatingList = stadiumRatingRepository.findAllByStadiumId(stadium.getId());
             return new StadiumWithRatingDto(stadium, stadiumRatingList);
         }).toList();
+    }
+    
+    public StadiumRating rateStadium(Integer stadiumId, RateStadiumDto rateStadiumDto){
+        return stadiumRatingRepository.save(new StadiumRating(stadiumId, rateStadiumDto));
     }
 }
