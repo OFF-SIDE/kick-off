@@ -5,9 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import offside.stadium.apiTypes.CreateStadiumByCrawlerDto;
 import offside.stadium.apiTypes.CreateStadiumDto;
-import offside.stadium.apiTypes.CreateStadiumInfoDto;
 import org.hibernate.annotations.ColumnDefault;
 
 @Entity
@@ -33,8 +31,8 @@ public class Stadium{
     @ColumnDefault("0")
     private int visitor;
 
-    private float X;
-    private float Y;
+    private float x;
+    private float y;
     private String openAt;
     private String closeAt;
 
@@ -128,19 +126,19 @@ public class Stadium{
     }
 
     public float getX() {
-        return X;
+        return x;
     }
 
     public void setX(float x) {
-        X = x;
+        x = x;
     }
 
     public float getY() {
-        return Y;
+        return y;
     }
 
     public void setY(float y) {
-        Y = y;
+        y = y;
     }
 
     public String getOpenAt() {
@@ -167,8 +165,8 @@ public class Stadium{
         this.category = createStadiumDto.getCategory();
         this.image = createStadiumDto.getImage();
         this.price = createStadiumDto.getPrice();
-        this.X = createStadiumDto.getX();
-        this.Y = createStadiumDto.getY();
+        this.x = createStadiumDto.getX();
+        this.y = createStadiumDto.getY();
         this.openAt = createStadiumDto.getOpenAt();
         this.closeAt = createStadiumDto.getCloseAt();
     }

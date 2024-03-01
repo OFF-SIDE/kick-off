@@ -1,77 +1,115 @@
 package offside.stadium.service;
 
 import jakarta.transaction.Transactional;
-
 import offside.stadium.apiTypes.CreateStadiumDto;
 import offside.stadium.apiTypes.CreateStadiumInfoDto;
-import offside.stadium.apiTypes.SearchParamDto;
+import offside.stadium.apiTypes.LocationSearchParamDto;
+import offside.stadium.apiTypes.RateStadiumDto;
+import offside.stadium.apiTypes.RangeSearchParamDto;
 import offside.stadium.domain.Stadium;
 import offside.stadium.domain.StadiumInfo;
+import offside.stadium.domain.StadiumRating;
+import offside.stadium.domain.StadiumStar;
+import offside.stadium.dto.StadiumWithInfoAndRatingAndStar;
 import offside.stadium.repository.StadiumInfoRepository;
+import offside.stadium.repository.StadiumRatingRepository;
 import offside.stadium.repository.StadiumRepository;
+import offside.stadium.repository.StadiumStarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
 public class StadiumService {
     private final StadiumRepository stadiumRepository;
     private final StadiumInfoRepository stadiumInfoRepository;
+    private final StadiumRatingRepository stadiumRatingRepository;
+    private final StadiumStarRepository stadiumStarRepository;
     @Autowired
-    public StadiumService(StadiumRepository stadiumRepository, StadiumInfoRepository stadiumInfoRepository) {
+    public StadiumService(StadiumRepository stadiumRepository, StadiumInfoRepository stadiumInfoRepository, StadiumRatingRepository stadiumRatingRepository, StadiumStarRepository stadiumStarRepository) {
         this.stadiumRepository = stadiumRepository;
         this.stadiumInfoRepository = stadiumInfoRepository;
+        this.stadiumRatingRepository = stadiumRatingRepository;
+        this.stadiumStarRepository = stadiumStarRepository;
     }
     
     
     /**
           * @summary 구장과 해당 구장 정보를 최신화하는 함수
-          * @param stadium
+          * @param stadiumData
           * @param stadiumInfoDtoList
           */
-    public void createNewStadiumByCrawler(CreateStadiumDto stadium, List<CreateStadiumInfoDto> stadiumInfoDtoList){
-        // 1. 이미 있을 수도 있음
-        // 1-a 있으면
-        // final var existStadium = stadiumRepository.findByXandY();
-        // if(existStadium.isEmpty()) -> 구장 삽입
-        // else
-        //      -> 있는 거 Id 쓰기
-        //      -> 기존 stadiumInfo 들 싹다 지우기
-        
-        // 1-b 없으면
-        final var createdStadium = stadiumRepository.save(new Stadium(stadium));
-        
-        List<StadiumInfo> stadiumInfoList = stadiumInfoDtoList.stream().map((stadiumInfoDto) -> new StadiumInfo(createdStadium.getId(), stadiumInfoDto)).toList();
-        stadiumInfoRepository.saveAll(stadiumInfoList);
+    public void createNewStadiumByCrawler(CreateStadiumDto stadiumData, List<CreateStadiumInfoDto> stadiumInfoDtoList){
+         final var stadium = stadiumRepository.findByXAndYAndCategory(stadiumData.getX(), stadiumData.getY(), stadiumData.getCategory()); // 구장 이미 있나 확인
+         if(stadium.isEmpty()){ // 없으면 -> 새로 생성
+             final var newStadium = stadiumRepository.save(new Stadium(stadiumData));
+             final var stadiumInfoList = stadiumInfoDtoList.stream().map((stadiumInfoDto) -> new StadiumInfo(newStadium.getId(), stadiumInfoDto)).toList();
+             stadiumInfoRepository.saveAll(stadiumInfoList);
+         } else { // 있으면 -> 기존 Info 다 지우고 업데이트
+             stadiumInfoRepository.deleteAllByStadiumId(stadium.get().getId());
+             final var stadiumInfoList = stadiumInfoDtoList.stream().map((stadiumInfoDto) -> new StadiumInfo(stadium.get().getId(), stadiumInfoDto)).toList();
+             stadiumInfoRepository.saveAll(stadiumInfoList);
+         }
     }
 //
     public List<Stadium> getStadiumListBySearch(String searchName){
-        return stadiumRepository.findEntitiesBySearchName(searchName);
+        return stadiumRepository.findAllBySearchName(searchName);
     }
-    public List<Stadium> getStadiumListByMap(SearchParamDto searchParamData){
+    public List<Stadium> getStadiumListByCategoryAndRange(RangeSearchParamDto searchParamData){
         float startX = searchParamData.getStartX();
         float startY = searchParamData.getStartY();
         float endX = searchParamData.getEndX();
         float endY = searchParamData.getEndY();
-        String category = searchParamData.getCategory();
+        final var category = searchParamData.getCategory();
+
+        return stadiumRepository.findAllBetweenLocationAndByCategory(category,startX,endX,startY,endY);
+    }
     
-        System.out.println(category);
-        System.out.println(startX);
-        System.out.println(startY);
-        System.out.println(endX);
-        System.out.println(endY);
+    public List<Stadium> getStadiumListByCategoryAndLocation(LocationSearchParamDto searchParamDto){
+        return stadiumRepository.findAllByCategoryAndLocation(searchParamDto.getCategory(), searchParamDto.getLocation());
+    }
+    
+    public StadiumRating rateStadium(Integer stadiumId, RateStadiumDto rateStadiumDto){
+        final var stadium = stadiumRepository.findById(stadiumId); // 10명 40점 + 1명 5점 -> 11명 45점
+        if(stadium.isEmpty()){
+            throw new IllegalArgumentException("해당하는 구장이 없습니다.");
+        }
         
-        return stadiumRepository.findEntitiesBetweenValues(category,startX,endX,startY,endY);
+        stadiumRepository.updateRating(stadium.get().getId(), stadium.get().getTotalRating() + rateStadiumDto.rating, stadium.get().getRatingPeople() + 1);
+        return stadiumRatingRepository.save(new StadiumRating(stadiumId, rateStadiumDto));
     }
-    public List<Stadium> getStadiumListByCategoryAndLocation(String category, List<String> location){
-        return stadiumRepository.findAllByLocationAndCategory(category,location);
-                //리스트로 들어온 지역에 따른 검색 결과 레포지토리에서 반환???
+    
+    public StadiumWithInfoAndRatingAndStar getStadiumInformation(Integer stadiumId, Integer userId){
+        final var stadium = stadiumRepository.findById(stadiumId);
+        if(stadium.isEmpty()){
+            throw new IllegalArgumentException("해당하는 구장이 없습니다");
+        }
+        final var stadiumInfoList = stadiumInfoRepository.findAllByStadiumId(stadiumId);
+        final var stadiumRateList = stadiumRatingRepository.findAllByStadiumId(stadiumId);
+        final var stadiumStar = stadiumStarRepository.findByUserIdAndStadiumId(userId, stadiumId);
+        return new StadiumWithInfoAndRatingAndStar(stadium.get(),stadiumInfoList,stadiumRateList, !stadiumStar.isEmpty());
     }
-//
-//    public Optional<Stadium> gotoStadiumInformation(Integer stadiumId){
-//        return stadiumRepository.findById(stadiumId);
-//    }
+    
+    public StadiumStar starStadium(Integer userId, Integer stadiumId){
+        final var star = stadiumStarRepository.findByUserIdAndStadiumId(userId, stadiumId);
+        if(star.isEmpty()){
+            return stadiumStarRepository.save(new StadiumStar(userId, stadiumId));
+        }
+        return star.get();
+    }
+    
+    public void unstarStadium(Integer userId, Integer stadiumId){
+        stadiumStarRepository.deleteByUserIdAndStadiumId(userId, stadiumId);
+    }
+    
+    // 내가 좋아요한 구장 목록 : 1번구장-3.4점 , 3번구장-4.5점
+    public List<Stadium> getStarStadiumList(Integer userId){
+        final var starList = stadiumStarRepository.findAllByUserId(userId); // (userId, stadiumId) (1,3) (1,4)
+        
+        return starList.stream().map(star -> {
+            return stadiumRepository.findById(star.getStadiumId()).get();
+        }).toList();
+    }
 }

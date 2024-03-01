@@ -4,7 +4,7 @@ import time
 import datetime
 
 def postStadium(data):
-    url = 'http://localhost:8080/stadium'  # API 엔드포인트 URL
+    url = 'http://localhost:8080/stadium/crawler'  # API 엔드포인트 URL
 
     # POST 요청 보내기
     response = requests.post(url, data=json.dumps(data), headers={'Content-Type': 'application/json'})
@@ -17,7 +17,7 @@ def postStadium(data):
         print("API 요청 실패:", response.text)
 
 def getStadiumDataFromPublicApi():
-    url = 'http://openapi.seoul.go.kr:8088/4b51536b76726b6438387544446862/json/ListPublicReservationSport/1/500/'
+    url = 'http://openapi.seoul.go.kr:8088/4b51536b76726b6438387544446862/json/ListPublicReservationSport/1/700/'
 
     response = requests.get(url)
     if response.status_code == 200:
@@ -40,7 +40,7 @@ def stadiumAppend(sendDataList, dataToInsert):
     st = l - 10 if l > 10 else 0
 
     for i in range(st, l):
-        if (sendDataList[i]["stadium"]["X"] == dataToInsert["stadium"]["X"] and sendDataList[i]["stadium"]["Y"] == dataToInsert["stadium"]["Y"] and sendDataList[i]["stadium"]["category"] == dataToInsert["stadium"]["category"]) or (sendDataList[i]["stadium"]["name"] == dataToInsert["stadium"]["name"] and sendDataList[i]["stadium"]["category"] == dataToInsert["stadium"]["category"]):
+        if (sendDataList[i]["stadium"]["x"] == dataToInsert["stadium"]["x"] and sendDataList[i]["stadium"]["y"] == dataToInsert["stadium"]["y"] and sendDataList[i]["stadium"]["category"] == dataToInsert["stadium"]["category"]) or (sendDataList[i]["stadium"]["name"] == dataToInsert["stadium"]["name"] and sendDataList[i]["stadium"]["category"] == dataToInsert["stadium"]["category"]):
             sendDataList[i]["stadiumInfoList"].append(dataToInsert["stadiumInfoList"][0])
             isInserted = True
             break
@@ -69,8 +69,8 @@ if __name__ == "__main__":
                 stadium["category"] = resultData[i]["MINCLASSNM"]
                 stadium["price"] = resultData[i]["PAYATNM"]
                 stadium["image"] = resultData[i]["IMGURL"]
-                stadium["X"] =  resultData[i]["X"]
-                stadium["Y"] =  resultData[i]["Y"]
+                stadium["x"] =  resultData[i]["X"]
+                stadium["y"] =  resultData[i]["Y"]
                 stadium["openAt"] = resultData[i]["V_MIN"]
                 stadium["closeAt"] = resultData[i]["V_MAX"]
                 # stadium_info
