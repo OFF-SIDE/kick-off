@@ -1,6 +1,9 @@
 package offside.stadium.controller;
 
+import jakarta.validation.Valid;
 import java.util.List;
+import offside.response.ApiResponse;
+import offside.response.ValidationException;
 import offside.stadium.apiTypes.CreateStadiumByCrawlerDto;
 import offside.stadium.apiTypes.LocationSearchParamDto;
 import offside.stadium.apiTypes.RateStadiumDto;
@@ -9,109 +12,110 @@ import offside.stadium.apiTypes.UserRequestDto;
 import offside.stadium.domain.Stadium;
 import offside.stadium.domain.StadiumRating;
 import offside.stadium.dto.StadiumWithInfoAndRatingAndStar;
-import offside.stadium.repository.StadiumInfoRepository;
-import offside.stadium.repository.StadiumRepository;
 import offside.stadium.service.StadiumService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
+@RequestMapping("stadium")
 public class StadiumController {
     private final StadiumService stadiumService;
-    private final StadiumRepository stadiumRepository;
-    private final StadiumInfoRepository stadiumInfoRepository;
     
     @Autowired
-    public StadiumController( StadiumRepository stadiumRepository, StadiumInfoRepository stadiumInfoRepository, StadiumService stadiumService) {
-        this.stadiumRepository = stadiumRepository;
-        this.stadiumInfoRepository = stadiumInfoRepository;
+    public StadiumController(StadiumService stadiumService) {
         this.stadiumService = stadiumService;
     }
     
-    @PostMapping("/stadium/crawler")
+    @PostMapping("crawler")
     @ResponseBody
-    public String createStadiumByCrawler(@RequestBody List<CreateStadiumByCrawlerDto> stadiumList){
+    public ApiResponse createStadiumByCrawler(@RequestBody List<CreateStadiumByCrawlerDto> stadiumList){
         stadiumList.forEach((stadium)-> {
             this.stadiumService.createNewStadiumByCrawler(stadium.stadium, stadium.stadiumInfoList);
         });
         
-        return "약 " + stadiumList.size() + "건의 구장 데이터 입력이 성공했습니다.";
+        return ApiResponse.createSuccess("약 " + stadiumList.size() + "건의 구장 데이터 입력이 성공했습니다.");
     }
     
-    @GetMapping("stadium/range")
+    @GetMapping("range")
     @ResponseBody
-    public List<Stadium> getStadiumListByCategoryAndRange(RangeSearchParamDto searchParamData, BindingResult bindingResult){
+    public ApiResponse<List<Stadium>> getStadiumListByCategoryAndRange(@Valid RangeSearchParamDto searchParamData, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
-            throw new IllegalArgumentException(bindingResult.getFieldError().getDefaultMessage());
+            throw new ValidationException(bindingResult);
         }
         
-        // 1. 해당 범위내에 category가 맞는 구장들 return (stadium만 가져오기)
-        return stadiumService.getStadiumListByCategoryAndRange(searchParamData);
+        return ApiResponse.createSuccess(stadiumService.getStadiumListByCategoryAndRange(searchParamData));
     }
     
-    @GetMapping("stadium/location")
+    @GetMapping("location")
     @ResponseBody
-    public List<Stadium> getStadiumListByCategoryAndLocation(LocationSearchParamDto searchParamData, BindingResult bindingResult){
+    public ApiResponse<List<Stadium>> getStadiumListByCategoryAndLocation(@Valid LocationSearchParamDto searchParamData, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
-            throw new IllegalArgumentException(bindingResult.getFieldError().getDefaultMessage());
+            throw new ValidationException(bindingResult);
         }
         // 1. 해당 지역구에 category가 맞는 구장들 return (stadium만 가져오기)
-        return stadiumService.getStadiumListByCategoryAndLocation(searchParamData);
+        return ApiResponse.createSuccess(stadiumService.getStadiumListByCategoryAndLocation(searchParamData));
     }
 
-    @GetMapping("stadium/search")
+    @GetMapping("search")
     @ResponseBody
-    public List<Stadium> getStadiumListBySearchName(@RequestParam("name") String searchName){
+    public ApiResponse<List<Stadium>> getStadiumListBySearchName(@RequestParam("name") String searchName){
         // 1. 해당 이름이 포함되어 있는 구장이 있는지 return (stadium만 가져오기)
-        return stadiumService.getStadiumListBySearch(searchName);
-        // 이름이 "포함"되어 있는 구장은 어떻게 찾는가?
+        return ApiResponse.createSuccess(stadiumService.getStadiumListBySearch(searchName));
     }
     
-    @PostMapping("stadium/{stadiumId}/rating")
+    @PostMapping("{stadiumId}/rating")
     @ResponseBody
-    public StadiumRating rateStadium(@PathVariable("stadiumId") Integer stadiumId, @RequestBody RateStadiumDto rateStadiumDto){
+    public ApiResponse<StadiumRating> rateStadium(@PathVariable("stadiumId") Integer stadiumId, @Valid @RequestBody RateStadiumDto rateStadiumDto, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            throw new ValidationException(bindingResult);
+        }
         // 0. 해당 유저가 로그인되어 있는지 확인
-        
-        // 해당 유저가 해당 구장에 평점 남기기
-        final var stadiumRating = stadiumService.rateStadium(stadiumId, rateStadiumDto);
-        return stadiumRating;
+        return ApiResponse.createSuccess(stadiumService.rateStadium(stadiumId, rateStadiumDto));
     }
 
     //구장 상세보기
-    @GetMapping("stadium/{stadiumId}")
+    @GetMapping("{stadiumId}")
     @ResponseBody
-    public StadiumWithInfoAndRatingAndStar getStadiumInformation(@PathVariable("stadiumId") Integer stadiumId, @RequestParam("userId") Integer userId) {
-        return stadiumService.getStadiumInformation(stadiumId, userId);
+    public ApiResponse<StadiumWithInfoAndRatingAndStar> getStadiumInformation(@PathVariable("stadiumId") Integer stadiumId, @RequestParam("userId") Integer userId) {
+        return ApiResponse.createSuccess(stadiumService.getStadiumInformation(stadiumId, userId));
     }
 
-    @PostMapping("stadium/{stadiumId}/star")
+    @PostMapping("{stadiumId}/star")
     @ResponseBody
-    public String starStadium(@PathVariable("stadiumId") Integer stadiumId, @RequestBody UserRequestDto userData){
+    public ApiResponse starStadium(@PathVariable("stadiumId") Integer stadiumId, @Valid @RequestBody UserRequestDto userData, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            throw new ValidationException(bindingResult);
+        }
         // star를 누르는 함수 -> star가 눌러지는 결과
-        final var star = stadiumService.starStadium(userData.getUserId(), stadiumId);
-        return "구장에 즐겨찾기가 되었습니다.";
+        stadiumService.starStadium(userData.getUserId(), stadiumId);
+        return ApiResponse.createSuccess("구장에 즐겨찾기가 되었습니다.");
     }
     
-    @PostMapping("stadium/{stadiumId}/unstar")
+    @PostMapping("{stadiumId}/unstar")
     @ResponseBody
-    public String unstarStadium(@PathVariable("stadiumId") Integer stadiumId, @RequestBody UserRequestDto userData){
+    public ApiResponse unstarStadium(@PathVariable("stadiumId") Integer stadiumId, @Valid @RequestBody UserRequestDto userData, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            throw new ValidationException(bindingResult);
+        }
         // star를 제거하는 함수 -> star가 제거되는 결과
         stadiumService.unstarStadium(userData.getUserId(), stadiumId);
-        return "구장 즐겨찾기가 해제되었습니다.";
+        return ApiResponse.createSuccess("구장 즐겨찾기가 해제되었습니다.");
     }
     
-    @GetMapping("stadium/star")
+    @GetMapping("star")
     @ResponseBody
-    public List<Stadium> getStarStadiumList(@RequestParam("userId") Integer userId){
-        return stadiumService.getStarStadiumList(userId);
+    public ApiResponse<List<Stadium>> getStarStadiumList(@RequestParam("userId") Integer userId){
+        return ApiResponse.createSuccess(stadiumService.getStarStadiumList(userId));
     }
     
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException exception){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
+    public ApiResponse handleIllegalArgumentException(IllegalArgumentException exception){
+        return ApiResponse.createError(exception.getMessage());
+    }
+    
+    @ExceptionHandler(ValidationException.class)
+    public ApiResponse handleValidationException(ValidationException exception){
+        return ApiResponse.createFail(exception.bindingResult);
     }
 }
