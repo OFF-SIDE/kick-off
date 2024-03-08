@@ -72,27 +72,23 @@ public class StadiumService {
     }
     
     public StadiumRating rateStadium(Integer stadiumId, RateStadiumDto rateStadiumDto){
-        final var stadium = stadiumRepository.findById(stadiumId); // 10명 40점 + 1명 5점 -> 11명 45점
-        if(stadium.isEmpty()){
-            throw new IllegalArgumentException("해당하는 구장이 없습니다.");
-        }
+        final var stadium = assertStadiumExist(stadiumId);
         
-        stadiumRepository.updateRating(stadium.get().getId(), stadium.get().getTotalRating() + rateStadiumDto.rating, stadium.get().getRatingPeople() + 1);
+        stadiumRepository.updateRating(stadium.getId(), stadium.getTotalRating() + rateStadiumDto.rating, stadium.getRatingPeople() + 1);
         return stadiumRatingRepository.save(new StadiumRating(stadiumId, rateStadiumDto));
     }
     
     public StadiumWithInfoAndRatingAndStar getStadiumInformation(Integer stadiumId, Integer userId){
-        final var stadium = stadiumRepository.findById(stadiumId);
-        if(stadium.isEmpty()){
-            throw new IllegalArgumentException("해당하는 구장이 없습니다");
-        }
+        final var stadium = assertStadiumExist(stadiumId);
+        
         final var stadiumInfoList = stadiumInfoRepository.findAllByStadiumId(stadiumId);
         final var stadiumRateList = stadiumRatingRepository.findAllByStadiumId(stadiumId);
         final var stadiumStar = stadiumStarRepository.findByUserIdAndStadiumId(userId, stadiumId);
-        return new StadiumWithInfoAndRatingAndStar(stadium.get(),stadiumInfoList,stadiumRateList, !stadiumStar.isEmpty());
+        return new StadiumWithInfoAndRatingAndStar(stadium,stadiumInfoList,stadiumRateList, !stadiumStar.isEmpty());
     }
     
     public StadiumStar starStadium(Integer userId, Integer stadiumId){
+        assertStadiumExist(stadiumId);
         final var star = stadiumStarRepository.findByUserIdAndStadiumId(userId, stadiumId);
         if(star.isEmpty()){
             return stadiumStarRepository.save(new StadiumStar(userId, stadiumId));
@@ -101,15 +97,23 @@ public class StadiumService {
     }
     
     public void unstarStadium(Integer userId, Integer stadiumId){
+        assertStadiumExist(stadiumId);
         stadiumStarRepository.deleteByUserIdAndStadiumId(userId, stadiumId);
     }
     
     // 내가 좋아요한 구장 목록 : 1번구장-3.4점 , 3번구장-4.5점
     public List<Stadium> getStarStadiumList(Integer userId){
         final var starList = stadiumStarRepository.findAllByUserId(userId); // (userId, stadiumId) (1,3) (1,4)
+        final var starStadiumIdList = starList.stream().map(star -> star.getStadiumId()).toList();
         
-        return starList.stream().map(star -> {
-            return stadiumRepository.findById(star.getStadiumId()).get();
-        }).toList();
+        return stadiumRepository.findAllByIdIn(starStadiumIdList);
+    }
+    
+    public Stadium assertStadiumExist(Integer stadiumId){
+        final var stadium = stadiumRepository.findById(stadiumId);
+        if(stadium.isEmpty()){
+            throw new IllegalArgumentException("해당하는 구장이 없습니다.");
+        }
+        return stadium.get();
     }
 }

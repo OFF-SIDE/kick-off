@@ -1,10 +1,15 @@
 package offside.referee.domain;
 
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
-
+@Entity
+@Getter
+@Setter
 public class RefereeRating {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,35 +32,4 @@ public class RefereeRating {
         this.ratingPeople = ratingPeople;
     }
     
-    public Integer getId() {
-        return id;
-    }
-    
-    public void setId(Integer id) {
-        this.id = id;
-    }
-    
-    public Integer getUserId() {
-        return userId;
-    }
-    
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-    
-    public Integer getTotalRating() {
-        return totalRating;
-    }
-    
-    public void setTotalRating(Integer totalRating) {
-        this.totalRating = totalRating;
-    }
-    
-    public Integer getRatingPeople() {
-        return ratingPeople;
-    }
-    
-    public void setRatingPeople(Integer ratingPeople) {
-        this.ratingPeople = ratingPeople;
-    }
 }

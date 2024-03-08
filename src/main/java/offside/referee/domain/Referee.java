@@ -5,12 +5,19 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import java.time.LocalDateTime;
 import java.util.Date;
+import lombok.Getter;
+import lombok.Setter;
 import offside.StatusEnum;
+import offside.referee.apiTypes.CreateRefereeHiringDto;
+import offside.referee.apiTypes.CreateRefereeJiwonDto;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 
 @Entity
+@Getter
+@Setter
 public class Referee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,21 +26,30 @@ public class Referee {
     public Integer userId;
     public String title;
     public Integer price;
-    public String imgLink;
+    
+    public Integer stadiumId;
+    @Column(nullable = true)
+    public String userStadium;
+    
+    @Column(nullable = true)
+    public String imgLink; // 지원글
     public String comment;
     public StatusEnum status;
+    public Boolean isHiring;
+    
     @ColumnDefault("false")
     public Boolean dateNego;
     @ColumnDefault("false")
     public Boolean timeNego;
     @ColumnDefault("false")
     public Boolean priceNego;
-    @CreatedDate
-    public Date createdAt;
+    public LocalDateTime createdAt;
+    
+    
     public Referee() {}
     
     public Referee(Integer userId, String title, Integer price, String imgLink, String comment,
-        StatusEnum status, Boolean dateNego, Boolean timeNego, Boolean priceNego) {
+        StatusEnum status, Boolean dateNego, Boolean timeNego, Boolean priceNego, Boolean isHiring, Integer stadiumId, String userStadium) {
         this.userId = userId;
         this.title = title;
         this.price = price;
@@ -43,93 +59,40 @@ public class Referee {
         this.dateNego = dateNego;
         this.timeNego = timeNego;
         this.priceNego = priceNego;
+        this.isHiring = isHiring;
+        this.userStadium = userStadium;
+        this.stadiumId = stadiumId;
+        this.createdAt = LocalDateTime.now();
     }
     
-    public Integer getId() {
-        return id;
+    public Referee(CreateRefereeHiringDto createRefereeHiringDto){
+        this.userId = createRefereeHiringDto.getUserId();
+        this.title = createRefereeHiringDto.getTitle();
+        this.price = createRefereeHiringDto.getPrice();
+        this.imgLink = "";
+        this.comment = createRefereeHiringDto.getComment();
+        this.status = StatusEnum.진행중;
+        this.dateNego = createRefereeHiringDto.getDateNego();
+        this.timeNego = createRefereeHiringDto.getTimeNego();
+        this.priceNego = createRefereeHiringDto.getPriceNego();
+        this.isHiring = true;
+        this.userStadium = createRefereeHiringDto.getUserStadium();
+        this.stadiumId = createRefereeHiringDto.getStadiumId();
+        this.createdAt = LocalDateTime.now();
     }
     
-    public void setId(Integer id) {
-        this.id = id;
+    public Referee(CreateRefereeJiwonDto createRefereeJiwonDto){
+        this.userId = createRefereeJiwonDto.getUserId();
+        this.title = createRefereeJiwonDto.getTitle();
+        this.price = createRefereeJiwonDto.getPrice();
+        this.imgLink = createRefereeJiwonDto.getImgLink();
+        this.comment = createRefereeJiwonDto.getComment();
+        this.status = StatusEnum.진행중;
+        this.dateNego = createRefereeJiwonDto.getDateNego();
+        this.timeNego = createRefereeJiwonDto.getTimeNego();
+        this.priceNego = createRefereeJiwonDto.getPriceNego();
+        this.isHiring = false;
+        this.createdAt = LocalDateTime.now();
     }
     
-    public Integer getUserId() {
-        return userId;
-    }
-    
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-    
-    public String getTitle() {
-        return title;
-    }
-    
-    public void setTitle(String title) {
-        this.title = title;
-    }
-    
-    public Integer getPrice() {
-        return price;
-    }
-    
-    public void setPrice(Integer price) {
-        this.price = price;
-    }
-    
-    public String getImgLink() {
-        return imgLink;
-    }
-    
-    public void setImgLink(String imgLink) {
-        this.imgLink = imgLink;
-    }
-    
-    public String getComment() {
-        return comment;
-    }
-    
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-    
-    public StatusEnum getStatus() {
-        return status;
-    }
-    
-    public void setStatus(StatusEnum status) {
-        this.status = status;
-    }
-    
-    public Boolean getDateNego() {
-        return dateNego;
-    }
-    
-    public void setDateNego(Boolean dateNego) {
-        this.dateNego = dateNego;
-    }
-    
-    public Boolean getTimeNego() {
-        return timeNego;
-    }
-    
-    public void setTimeNego(Boolean timeNego) {
-        this.timeNego = timeNego;
-    }
-    
-    public Boolean getPriceNego() {
-        return priceNego;
-    }
-    
-    public void setPriceNego(Boolean priceNego) {
-        this.priceNego = priceNego;
-    }
-    
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-    
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
 }

@@ -16,6 +16,8 @@ public interface StadiumRepository extends JpaRepository<Stadium, Integer> {
     Optional<Stadium> findByXAndYAndCategory(float x, float y, String category);
     List<Stadium> findAllByCategoryAndLocation(String category, String location);
     
+    List<Stadium> findAllByIdIn(List<Integer> stadiumIdList);
+    
     @Modifying
     @Query("UPDATE Stadium m SET m.totalRating = :newRating, m.ratingPeople = :ratingPeople WHERE m.id = :id")
     void updateRating(@Param("id") Integer id, @Param("newRating") Integer newRating, @Param("ratingPeople") Integer ratingPeople);

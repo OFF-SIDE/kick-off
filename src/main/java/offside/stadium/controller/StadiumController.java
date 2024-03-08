@@ -43,7 +43,6 @@ public class StadiumController {
         if(bindingResult.hasErrors()){
             throw new ValidationException(bindingResult);
         }
-        
         return ApiResponse.createSuccess(stadiumService.getStadiumListByCategoryAndRange(searchParamData));
     }
     
@@ -77,7 +76,7 @@ public class StadiumController {
     //구장 상세보기
     @GetMapping("{stadiumId}")
     @ResponseBody
-    public ApiResponse<StadiumWithInfoAndRatingAndStar> getStadiumInformation(@PathVariable("stadiumId") Integer stadiumId, @RequestParam("userId") Integer userId) {
+    public ApiResponse<StadiumWithInfoAndRatingAndStar> getStadiumInformation(@PathVariable("stadiumId") Integer stadiumId,@RequestParam("userId") Integer userId) {
         return ApiResponse.createSuccess(stadiumService.getStadiumInformation(stadiumId, userId));
     }
 
@@ -106,8 +105,13 @@ public class StadiumController {
     @GetMapping("star")
     @ResponseBody
     public ApiResponse<List<Stadium>> getStarStadiumList(@RequestParam("userId") Integer userId){
+        System.out.println(userId);
         return ApiResponse.createSuccess(stadiumService.getStarStadiumList(userId));
     }
+    
+    // 구장 목록 불러오기
+    
+    
     
     @ExceptionHandler(IllegalArgumentException.class)
     public ApiResponse handleIllegalArgumentException(IllegalArgumentException exception){

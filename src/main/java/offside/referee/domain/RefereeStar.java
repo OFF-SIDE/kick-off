@@ -4,8 +4,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 public class RefereeStar {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,27 +25,4 @@ public class RefereeStar {
         this.refereeId = refereeId;
     }
     
-    public Integer getId() {
-        return id;
-    }
-    
-    public void setId(Integer id) {
-        this.id = id;
-    }
-    
-    public Integer getUserId() {
-        return userId;
-    }
-    
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-    
-    public Integer getRefereeId() {
-        return refereeId;
-    }
-    
-    public void setRefereeId(Integer refereeId) {
-        this.refereeId = refereeId;
-    }
 }
