@@ -34,9 +34,7 @@ public class RefereeController {
         if(bindingResult.hasErrors()){ // 유효성 검사
             throw new ValidationException(bindingResult);
         }
-        final var a = ApiResponse.createSuccess(refereeService.refereeHiring(createRefereeHiringDto));
-        System.out.println(a);
-        return a;
+        return ApiResponse.createSuccess(refereeService.refereeHiring(createRefereeHiringDto));
     }
     
     
@@ -47,9 +45,7 @@ public class RefereeController {
         if(bindingResult.hasErrors()){ // 유효성 검사
             throw new ValidationException(bindingResult);
         }
-    
         return ApiResponse.createSuccess(refereeService.refereeJiwon(createRefereeJiwonDto));
-        
     }
     
     
