@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 @Transactional
 public interface RefereeRepository extends JpaRepository<Referee, Integer> {
-
+    Referee findByRefereeId(Integer refereeId);
 }

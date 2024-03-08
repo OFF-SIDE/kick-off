@@ -3,6 +3,7 @@ package offside.referee.service;
 import java.util.List;
 import offside.CategoryEnum;
 import offside.LocationEnum;
+import offside.StatusEnum;
 import offside.referee.apiTypes.CreateRefereeHiringDto;
 import offside.referee.apiTypes.CreateRefereeJiwonDto;
 import offside.referee.domain.Referee;
@@ -100,7 +101,12 @@ public class RefereeService {
         
         return referee;
     }
-    
+
+    public Referee changeStatus(Integer refereeId, StatusEnum newStatus){
+        final var referee = refereeRepository.findByRefereeId(refereeId);
+        referee.setStatus(newStatus);
+        return referee;
+    }
     
     
 }
