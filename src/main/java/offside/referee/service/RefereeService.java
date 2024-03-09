@@ -102,11 +102,11 @@ public class RefereeService {
         return referee;
     }
 
-    public Referee changeStatus(Integer refereeId, StatusEnum newStatus){
-        final var referee = refereeRepository.findByRefereeId(refereeId);
-        referee.setStatus(newStatus);
-        return referee;
-    }
+//    public Referee changeStatus(Integer refereeId, StatusEnum newStatus){
+//        final var referee = refereeRepository.findById(refereeId);
+//        referee.setStatus(newStatus);
+//        return referee;
+//    }
     
-    
+
 }

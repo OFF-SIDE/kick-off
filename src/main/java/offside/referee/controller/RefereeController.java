@@ -49,14 +49,14 @@ public class RefereeController {
     
     
     // 4. 글 상태 변경하기 (사용자가 본인 글 마감처리)
-    @PostMapping("status")
-    @ResponseBody
-    public ApiResponse<Referee> changeStatus(@PathVariable Integer refereeId, @RequestBody StatusEnum newStatus, BindingResult bindingResult){
-        if(bindingResult.hasErrors()){ // 유효성 검사
-            throw new ValidationException(bindingResult);
-        }
-        return ApiResponse.createSuccess(refereeService.changeStatus(refereeId, newStatus));
-    }
+//    @PostMapping("status")
+//    @ResponseBody
+//    public ApiResponse<Referee> changeStatus(@PathVariable Integer refereeId, @RequestBody StatusEnum newStatus, BindingResult bindingResult){
+//        if(bindingResult.hasErrors()){ // 유효성 검사
+//            throw new ValidationException(bindingResult);
+//        }
+//        return ApiResponse.createSuccess(refereeService.changeStatus(refereeId, newStatus));
+//    }
 
     // 5. 구인/지원 글 인기순 or 최신순으로 각 2/3개씩 불러오기
     
