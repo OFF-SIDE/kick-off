@@ -1,9 +1,11 @@
 package offside.referee.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import offside.CategoryEnum;
 import offside.LocationEnum;
 import offside.StatusEnum;
+import offside.referee.apiTypes.ChangeStatusDto;
 import offside.referee.apiTypes.CreateRefereeHiringDto;
 import offside.referee.apiTypes.CreateRefereeJiwonDto;
 import offside.referee.domain.Referee;
@@ -85,8 +87,8 @@ public class RefereeService {
         // 2. referee 글 관련 entity 추가
         saveRefereeDate(referee.getId(), createRefereeHiringDto.getDateList());
         saveRefereeTime(referee.getId(), createRefereeHiringDto.getTimeList());
-        saveRefereeCategory(referee.getId(), createRefereeHiringDto.getCategoryList());
-        saveRefereeLocation(referee.getId(), createRefereeHiringDto.getLocationList());
+        saveRefereeCategory(referee.getId(), new ArrayList<>(createRefereeHiringDto.getCategory().ordinal()));
+        saveRefereeLocation(referee.getId(), new ArrayList<>(createRefereeHiringDto.getLocation().ordinal()));
         
         return referee;
     }
@@ -102,11 +104,12 @@ public class RefereeService {
         return referee;
     }
 
-//    public Referee changeStatus(Integer refereeId, StatusEnum newStatus){
-//        final var referee = refereeRepository.findById(refereeId);
-//        referee.setStatus(newStatus);
-//        return referee;
-//    }
-    
-
+    public Referee changeRefereeStatus(Integer refereeId, ChangeStatusDto newStatus){
+        final var referee = refereeRepository.findById(refereeId);
+        if(referee.isEmpty()){
+            throw new IllegalArgumentException("해당하는 심판 글이 없습니다.");
+        }
+        referee.get().setStatus(newStatus.getStatus());
+        return refereeRepository.save(referee.get());
+    }
 }

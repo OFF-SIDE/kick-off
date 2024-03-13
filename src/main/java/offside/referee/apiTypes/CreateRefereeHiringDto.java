@@ -31,10 +31,10 @@ public class CreateRefereeHiringDto {
     public Boolean timeNego = false;
     public Boolean priceNego = false;
     
-    @NotEmpty
-    public List<CategoryEnum> categoryList;
-    @NotEmpty
-    public List<LocationEnum> locationList;
+    @NotNull
+    public CategoryEnum category;
+    @NotNull
+    public LocationEnum location;
     @NotEmpty
     public List<Integer> dateList;
     @NotEmpty
@@ -43,23 +43,23 @@ public class CreateRefereeHiringDto {
     public CreateRefereeHiringDto() {}
     
     public CreateRefereeHiringDto(Integer userId, String title, Integer price, Integer stadiumId,
-        String userStadium, String comment, List<CategoryEnum> categoryList,
-        List<LocationEnum> locationList, List<Integer> dateList, List<Integer> timeList) {
+        String userStadium, String comment, CategoryEnum category,
+        LocationEnum location, List<Integer> dateList, List<Integer> timeList) {
         this.userId = userId;
         this.title = title;
         this.price = price;
         this.stadiumId = stadiumId;
         this.userStadium = userStadium;
         this.comment = comment;
-        this.categoryList = categoryList;
-        this.locationList = locationList;
+        this.category = category;
+        this.location = location;
         this.dateList = dateList;
         this.timeList = timeList;
     }
     
     public CreateRefereeHiringDto(Integer userId, String title, Integer price, Integer stadiumId,
         String userStadium, String comment, Boolean dateNego, Boolean timeNego, Boolean priceNego,
-        List<CategoryEnum> categoryList, List<LocationEnum> locationList, List<Integer> dateList,
+        CategoryEnum category, LocationEnum location, List<Integer> dateList,
         List<Integer> timeList) {
         this.userId = userId;
         this.title = title;
@@ -70,8 +70,8 @@ public class CreateRefereeHiringDto {
         this.dateNego = dateNego;
         this.timeNego = timeNego;
         this.priceNego = priceNego;
-        this.categoryList = categoryList;
-        this.locationList = locationList;
+        this.category = category;
+        this.location = location;
         this.dateList = dateList;
         this.timeList = timeList;
     }
