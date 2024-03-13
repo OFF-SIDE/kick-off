@@ -49,6 +49,18 @@ def stadiumAppend(sendDataList, dataToInsert):
         sendDataList.append(dataToInsert)
 
 if __name__ == "__main__":
+    LocationEnum = {
+        "강남구" : 0, "강동구" : 1, "강북구" : 2, "강서구" : 3, "관악구" : 4,
+        "광진구" : 5, "구로구" : 6, "금천구" : 7, "노원구" : 8, "도봉구" : 9,
+        "동대문구" : 10, "동작구": 11, "마포구": 12, "서대문구" : 13, "서초구" : 14,
+        "성동구" : 15, "성북구" : 16, "송파구" : 17, "양천구" : 18,"영등포구" : 19,
+        "용산구": 20, "은평구" : 21, "종로구" : 22, "중구" : 23, "중랑구" : 24
+    }
+    StadiumCategoryEnum = {
+        "테니스장" : 0, "축구장" : 1, "풋살장": 2, "족구장" : 3, "야구장" : 4,
+        "농구장" : 5, "배구장" : 6, "배드민턴장" : 7, "골프장" : 8, "다목적경기장" : 8, "교육시설": 8, "체육관":8, "탁구장":8
+    }
+
     data = getStadiumDataFromPublicApi()
     dataLength = data['ListPublicReservationSport']['list_total_count']
     resultData = data['ListPublicReservationSport']['row']
@@ -63,10 +75,10 @@ if __name__ == "__main__":
                 stadium = dict()
                 # stadium
                 stadium["name"] = resultData[i]["PLACENM"]
-                stadium["location"] = resultData[i]["AREANM"]
+                stadium["location"] = LocationEnum[resultData[i]["AREANM"]]
                 stadium["contactPhone"] = resultData[i]["TELNO"]
                 stadium["comment"] = resultData[i]["DTLCONT"][:1024]
-                stadium["category"] = resultData[i]["MINCLASSNM"]
+                stadium["category"] = StadiumCategoryEnum[resultData[i]["MINCLASSNM"]]
                 stadium["price"] = resultData[i]["PAYATNM"]
                 stadium["image"] = resultData[i]["IMGURL"]
                 stadium["x"] =  resultData[i]["X"]
