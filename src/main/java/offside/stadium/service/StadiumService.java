@@ -1,6 +1,7 @@
 package offside.stadium.service;
 
 import jakarta.transaction.Transactional;
+import offside.StadiumCategoryEnum;
 import offside.stadium.apiTypes.CreateStadiumDto;
 import offside.stadium.apiTypes.CreateStadiumInfoDto;
 import offside.stadium.apiTypes.LocationSearchParamDto;
@@ -68,7 +69,11 @@ public class StadiumService {
     }
     
     public List<Stadium> getStadiumListByCategoryAndLocation(LocationSearchParamDto searchParamDto){
-        return stadiumRepository.findAllByCategoryAndLocation(searchParamDto.getCategory(), searchParamDto.getLocation());
+        if(searchParamDto.getLocation().size() == 1){
+            return stadiumRepository.findAllByCategoryAndLocation(searchParamDto.getCategory(), searchParamDto.getLocation().get(0));
+        }else{
+            return stadiumRepository.findAllByCategoryAndLocationIn(searchParamDto.getCategory(), searchParamDto.getLocation());
+        }
     }
     
     public StadiumRating rateStadium(Integer stadiumId, RateStadiumDto rateStadiumDto){
