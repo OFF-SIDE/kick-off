@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
+import offside.CategoryEnum;
 import offside.StatusEnum;
 import offside.referee.apiTypes.CreateRefereeHiringDto;
 import offside.referee.apiTypes.CreateRefereeJiwonDto;
@@ -36,6 +37,7 @@ public class Referee {
     public String comment;
     public StatusEnum status;
     public Boolean isHiring;
+    public CategoryEnum category;
     
     @ColumnDefault("false")
     public Boolean dateNego;
@@ -48,21 +50,25 @@ public class Referee {
     
     public Referee() {}
     
-    public Referee(Integer userId, String title, Integer price, String imgLink, String comment,
-        StatusEnum status, Boolean dateNego, Boolean timeNego, Boolean priceNego, Boolean isHiring, Integer stadiumId, String userStadium) {
+    public Referee(Integer id, Integer userId, String title, Integer price, Integer stadiumId,
+        String userStadium, String imgLink, String comment, StatusEnum status, Boolean isHiring,
+        CategoryEnum category, Boolean dateNego, Boolean timeNego, Boolean priceNego,
+        LocalDateTime createdAt) {
+        this.id = id;
         this.userId = userId;
         this.title = title;
         this.price = price;
+        this.stadiumId = stadiumId;
+        this.userStadium = userStadium;
         this.imgLink = imgLink;
         this.comment = comment;
         this.status = status;
+        this.isHiring = isHiring;
+        this.category = category;
         this.dateNego = dateNego;
         this.timeNego = timeNego;
         this.priceNego = priceNego;
-        this.isHiring = isHiring;
-        this.userStadium = userStadium;
-        this.stadiumId = stadiumId;
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = createdAt;
     }
     
     public Referee(CreateRefereeHiringDto createRefereeHiringDto){
@@ -79,6 +85,7 @@ public class Referee {
         this.userStadium = createRefereeHiringDto.getUserStadium();
         this.stadiumId = createRefereeHiringDto.getStadiumId();
         this.createdAt = LocalDateTime.now();
+        this.category = createRefereeHiringDto.getCategory();
     }
     
     public Referee(CreateRefereeJiwonDto createRefereeJiwonDto){
@@ -93,6 +100,7 @@ public class Referee {
         this.priceNego = createRefereeJiwonDto.getPriceNego();
         this.isHiring = false;
         this.createdAt = LocalDateTime.now();
+        this.category = createRefereeJiwonDto.getCategory();
     }
     
 }

@@ -16,7 +16,7 @@ public class RefereeTime {
     public Integer id;
     
     public Integer refereeId;
-    public Integer hour; // 1430 1200
+    public Integer hour;
     
     public RefereeTime() {}
     

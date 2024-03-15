@@ -16,7 +16,7 @@ public class CreateRefereeJiwonDto {
     @NotNull
     public Integer userId;
     @NotEmpty
-    public List<CategoryEnum> categoryList;
+    public CategoryEnum category;
     @NotEmpty
     public List<LocationEnum> locationList;
     @NotEmpty
@@ -37,12 +37,12 @@ public class CreateRefereeJiwonDto {
     
     public CreateRefereeJiwonDto() {}
     
-    public CreateRefereeJiwonDto(Integer userId, List<CategoryEnum> categoryList,
+    public CreateRefereeJiwonDto(Integer userId, CategoryEnum category,
         List<LocationEnum> locationList, List<Integer> dateList, Boolean dateNego,
         List<Integer> timeList, Boolean timeNego, Integer price, Boolean priceNego,
         String imgLink, String title, String comment) {
         this.userId = userId;
-        this.categoryList = categoryList;
+        this.category = category;
         this.locationList = locationList;
         this.dateList = dateList;
         this.dateNego = dateNego;

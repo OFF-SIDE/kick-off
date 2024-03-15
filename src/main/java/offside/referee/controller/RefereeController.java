@@ -3,11 +3,14 @@ package offside.referee.controller;
 import jakarta.validation.Valid;
 import java.sql.Ref;
 
+import java.util.List;
 import offside.StatusEnum;
 import offside.referee.apiTypes.ChangeStatusDto;
 import offside.referee.apiTypes.CreateRefereeHiringDto;
 import offside.referee.apiTypes.CreateRefereeJiwonDto;
+import offside.referee.apiTypes.RefereeSearchDto;
 import offside.referee.domain.Referee;
+import offside.referee.dto.RefereeSummaryDto;
 import offside.referee.service.RefereeService;
 import offside.response.ApiResponse;
 import offside.response.ValidationException;
@@ -47,6 +50,21 @@ public class RefereeController {
     }
 
     // 3. 구인/지원 글 목록 불러오기 (날짜순) + Q. 지역, 날짜, 시간, 예약/마감(상태)
+    // isHiring = true
+    // location = [마포구,성동구]
+    // dateList = [20240313, 20240314]
+    // timeList = [1200,1230,1300,1330,1400]
+    // status = 예약중
+    @GetMapping()
+    @ResponseBody
+    public ApiResponse<List<RefereeSummaryDto>> getRefereeList(@Valid RefereeSearchDto refereeSearchDto, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){ // 유효성 검사
+            throw new ValidationException(bindingResult);
+        }
+        return ApiResponse.createSuccess(refereeService.getRefereeListBySearchDto(refereeSearchDto));
+    }
+    
+    
     
     
 //     4. 글 상태 변경하기 (사용자가 본인 글 마감처리)
