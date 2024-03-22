@@ -1,15 +1,21 @@
 package offside.referee.repository;
 
 import jakarta.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 import offside.CategoryEnum;
 import offside.StatusEnum;
 import offside.referee.domain.Referee;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
 @Transactional
 public interface RefereeRepository extends JpaRepository<Referee, Integer> {
-    List<Referee> findAllByIsHiringAndCategoryAndStatus(Boolean isHiring, CategoryEnum category,StatusEnum status);
+    @Query("SELECT db FROM Referee db WHERE db.isHiring = :isHiring AND db.category = :category AND db.status = :status AND db.startDate <= :endDate AND db.endDate >= :startDate AND db.startTime <= :endTime AND db.endTime > :startTime ORDER BY db.createdAt desc")
+    List<Referee> findAllBySearch(Integer startTime, Integer endTime, LocalDateTime startDate, LocalDateTime endDate, Boolean isHiring, CategoryEnum category, StatusEnum status);
+    
+    
+    
 }

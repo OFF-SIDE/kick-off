@@ -3,7 +3,7 @@ package offside.referee.apiTypes;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import java.util.List;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
 import offside.CategoryEnum;
@@ -35,32 +35,23 @@ public class CreateRefereeHiringDto {
     public CategoryEnum category;
     @NotNull
     public LocationEnum location;
-    @NotEmpty
-    public List<Integer> dateList;
-    @NotEmpty
-    public List<Integer> timeList;
+    @NotNull
+    public LocalDateTime startDate;
+    @NotNull
+    public LocalDateTime endDate;
+    
+    @NotNull
+    public Integer startTime;
+    @NotNull
+    public Integer endTime;
     
     public CreateRefereeHiringDto() {}
     
     public CreateRefereeHiringDto(Integer userId, String title, Integer price, Integer stadiumId,
-        String userStadium, String comment, CategoryEnum category,
-        LocationEnum location, List<Integer> dateList, List<Integer> timeList) {
-        this.userId = userId;
-        this.title = title;
-        this.price = price;
-        this.stadiumId = stadiumId;
-        this.userStadium = userStadium;
-        this.comment = comment;
-        this.category = category;
-        this.location = location;
-        this.dateList = dateList;
-        this.timeList = timeList;
-    }
-    
-    public CreateRefereeHiringDto(Integer userId, String title, Integer price, Integer stadiumId,
         String userStadium, String comment, Boolean dateNego, Boolean timeNego, Boolean priceNego,
-        CategoryEnum category, LocationEnum location, List<Integer> dateList,
-        List<Integer> timeList) {
+        CategoryEnum category, LocationEnum location, LocalDateTime startDate,
+        LocalDateTime endDate,
+        Integer startTime, Integer endTime) {
         this.userId = userId;
         this.title = title;
         this.price = price;
@@ -72,7 +63,9 @@ public class CreateRefereeHiringDto {
         this.priceNego = priceNego;
         this.category = category;
         this.location = location;
-        this.dateList = dateList;
-        this.timeList = timeList;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 }

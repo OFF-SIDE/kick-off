@@ -49,12 +49,7 @@ public class RefereeController {
         return ApiResponse.createSuccess(refereeService.refereeJiwon(createRefereeJiwonDto));
     }
 
-    // 3. 구인/지원 글 목록 불러오기 (날짜순) + Q. 지역, 날짜, 시간, 예약/마감(상태)
-    // isHiring = true
-    // location = [마포구,성동구]
-    // dateList = [20240313, 20240314]
-    // timeList = [1200,1230,1300,1330,1400]
-    // status = 예약중
+//     3. 구인/지원 글 목록 불러오기 (날짜순) + Q. 지역, 날짜, 시간, 예약/마감(상태)
     @GetMapping()
     @ResponseBody
     public ApiResponse<List<RefereeSummaryDto>> getRefereeList(@Valid RefereeSearchDto refereeSearchDto, BindingResult bindingResult){

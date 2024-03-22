@@ -1,6 +1,8 @@
 package offside.referee.apiTypes;
 
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,12 +16,16 @@ public class RefereeSearchDto {
     
     @NotNull
     Boolean isHiring;
-    @NotNull
+    @NotEmpty
     List<LocationEnum> locationList;
     @NotNull
-    List<Integer> dateList;
+    public LocalDateTime startDate;
     @NotNull
-    List<Integer> timeList;
+    public LocalDateTime endDate;
+    @NotNull
+    public Integer startTime;
+    @NotNull
+    public Integer endTime;
     @NotNull
     CategoryEnum category;
     
@@ -28,13 +34,16 @@ public class RefereeSearchDto {
     public RefereeSearchDto() {}
     
     public RefereeSearchDto(Boolean isHiring, List<LocationEnum> locationList,
-        List<Integer> dateList,
-        List<Integer> timeList, CategoryEnum categoryList, StatusEnum status) {
+        LocalDateTime startDate,
+        LocalDateTime endDate, Integer startTime, Integer endTime, CategoryEnum category,
+        StatusEnum status) {
         this.isHiring = isHiring;
         this.locationList = locationList;
-        this.dateList = dateList;
-        this.timeList = timeList;
-        this.category = categoryList;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.category = category;
         this.status = status;
     }
 }

@@ -4,6 +4,7 @@ package offside.referee.apiTypes;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,16 +16,20 @@ import offside.LocationEnum;
 public class CreateRefereeJiwonDto {
     @NotNull
     public Integer userId;
-    @NotEmpty
+    @NotNull
     public CategoryEnum category;
     @NotEmpty
     public List<LocationEnum> locationList;
-    @NotEmpty
-    public List<Integer> dateList;
+    @NotNull
+    public LocalDateTime startDate;
+    @NotNull
+    public LocalDateTime endDate;
     
     public Boolean dateNego = false;
-    @NotEmpty
-    public List<Integer> timeList;
+    @NotNull
+    public Integer startTime;
+    @NotNull
+    public Integer endTime;
     public Boolean timeNego = false;
     @NotNull
     public Integer price;
@@ -38,15 +43,18 @@ public class CreateRefereeJiwonDto {
     public CreateRefereeJiwonDto() {}
     
     public CreateRefereeJiwonDto(Integer userId, CategoryEnum category,
-        List<LocationEnum> locationList, List<Integer> dateList, Boolean dateNego,
-        List<Integer> timeList, Boolean timeNego, Integer price, Boolean priceNego,
-        String imgLink, String title, String comment) {
+        List<LocationEnum> locationList,
+        LocalDateTime startDate, LocalDateTime endDate, Boolean dateNego, Integer startTime,
+        Integer endTime, Boolean timeNego, Integer price, Boolean priceNego, String imgLink,
+        String title, String comment) {
         this.userId = userId;
         this.category = category;
         this.locationList = locationList;
-        this.dateList = dateList;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.dateNego = dateNego;
-        this.timeList = timeList;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.timeNego = timeNego;
         this.price = price;
         this.priceNego = priceNego;
