@@ -10,7 +10,7 @@ import offside.StadiumCategoryEnum;
 @Setter
 public class RangeSearchParamDto {
     
-    @NotBlank(message = "종목을 선택해주세요!")
+    @NotNull(message = "종목을 선택해주세요!")
     StadiumCategoryEnum category;
     @NotNull(message = "시작하는 X가 필요합니다.")
     float startX;

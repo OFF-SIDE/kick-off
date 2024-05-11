@@ -92,7 +92,6 @@ public class RefereeService {
                 locationMap.put(refereeLocation.getRefereeId(),locationList); // 3-[마포구] -> 3-[마포구, 성동구]
             }
         });
-        
         final var refereeLocationIdSet = locationMap.keySet();
         
         return refereeLocationIdSet.stream().map(refereeLocationId -> {

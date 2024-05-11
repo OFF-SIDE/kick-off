@@ -67,6 +67,10 @@ public class ApiResponse<T> {
         return new ApiResponse<>(ERROR_STATUS, httpStatusCode, null, message);
     }
     
+    public static <T> ApiResponse<T> createError(T data,String message) {
+        return new ApiResponse<>(ERROR_STATUS, HttpStatus.BAD_REQUEST.value(), data, message);
+    }
+    
     private ApiResponse(String status, Integer code,T data, String message) {
         this.status = status;
         this.code = code;
