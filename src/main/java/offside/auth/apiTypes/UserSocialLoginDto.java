@@ -7,12 +7,12 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserSocialLoginDto {
-    @NotNull(message = "oauthToken을 주세요")
-    public String oauthToken;
+    @NotNull(message = "kakaoId를 주세요")
+    public String userId;
     
     public UserSocialLoginDto() {}
     
-    public UserSocialLoginDto(String oauthToken) {
-        this.oauthToken = oauthToken;
+    public UserSocialLoginDto(String userId) {
+        this.userId = userId;
     }
 }

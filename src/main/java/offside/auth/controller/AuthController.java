@@ -3,7 +3,10 @@ package offside.auth.controller;
 import offside.auth.apiTypes.UserSocialLoginDto;
 import offside.auth.service.AuthService;
 import offside.response.ApiResponse;
+import offside.response.exception.CustomException;
+import offside.response.exception.CustomExceptionTypes;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,12 +28,16 @@ public class AuthController {
     @PostMapping("login")
     @ResponseBody
     public ApiResponse socialLogin(@RequestBody UserSocialLoginDto userSocialLoginDto){
-        System.out.println(userSocialLoginDto.oauthToken);
-        final var socialLoginResponse = authService.socialLogin(userSocialLoginDto);
-        if(socialLoginResponse.isLogin){
-            return ApiResponse.createSuccess(socialLoginResponse.jwtTokens.getAccessToken(),"로그인에 성공했습니다.");
-        }else{
-            return ApiResponse.createError(socialLoginResponse.jwtTokens.getAccessToken(),"로그인에 실패했습니다. 회원가입을 먼저 진행해주세요");
-        }
+        System.out.println(userSocialLoginDto.getUserId());
+        throw new CustomException(CustomExceptionTypes.USER_ID_NOT_FOUND);
+
+        
+        
+//        final var socialLoginResponse = authService.socialLogin(userSocialLoginDto);
+//        if(socialLoginResponse.isLogin){
+//            return ApiResponse.createSuccess(socialLoginResponse.jwtTokens.getAccessToken(),"로그인에 성공했습니다.");
+//        }else{
+//            return ApiResponse.createError(socialLoginResponse.jwtTokens.getAccessToken(),"로그인에 실패했습니다. 회원가입을 먼저 진행해주세요");
+//        }
     }
 }

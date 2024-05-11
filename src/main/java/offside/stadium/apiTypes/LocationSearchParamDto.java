@@ -14,6 +14,6 @@ import offside.StadiumCategoryEnum;
 public class LocationSearchParamDto{
     @NotNull(message = "종목을 선택해주세요!")
     StadiumCategoryEnum category;
-    @NotNull(message = "구를 선택해주세요!")
+    @NotNull(message = "지역구를 선택해주세요!")
     List<LocationEnum> location;
 }

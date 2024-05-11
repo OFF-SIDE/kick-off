@@ -14,30 +14,30 @@ import offside.LocationEnum;
 @Getter
 @Setter
 public class CreateRefereeJiwonDto {
-    @NotNull
+    @NotNull(message = "userId를 입력해주세요")
     public Integer userId;
-    @NotNull
+    @NotNull(message = "category를 입력해주세요")
     public CategoryEnum category;
-    @NotEmpty
+    @NotEmpty(message = "location을 입력해주세요")
     public List<LocationEnum> locationList;
-    @NotNull
+    @NotNull(message = "startDate를 입력해주세요")
     public LocalDateTime startDate;
-    @NotNull
+    @NotNull(message = "endDate를 입력해주세요")
     public LocalDateTime endDate;
     
     public Boolean dateNego = false;
-    @NotNull
+    @NotNull(message = "startTime을 입력해주세요")
     public Integer startTime;
-    @NotNull
+    @NotNull(message = "endTime을 입력해주세요")
     public Integer endTime;
     public Boolean timeNego = false;
-    @NotNull
+    @NotNull(message = "price를 입력해주세요")
     public Integer price;
     public Boolean priceNego = false;
     public String imgLink;
-    @NotBlank
+    @NotBlank(message = "title을 입력해주세요")
     public String title;
-    @NotBlank
+    @NotBlank(message = "comment를 입력해주세요")
     public String comment;
     
     public CreateRefereeJiwonDto() {}

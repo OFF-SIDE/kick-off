@@ -35,7 +35,7 @@ public class AuthService {
     }
     
     public SocialLoginResponseDto socialLogin(UserSocialLoginDto userSocialLoginDto){
-        final var kakaoUserInfo = getKakaoDataByToken(userSocialLoginDto.oauthToken);
+        final var kakaoUserInfo = getKakaoDataByToken(userSocialLoginDto.getUserId());
         
         final var account = this.accountRepository.findByOauthId(kakaoUserInfo.getId().toString());
         if(account.isEmpty()){

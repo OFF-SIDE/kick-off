@@ -17,6 +17,8 @@ import offside.referee.repository.RefereeLocationRepository;
 import offside.referee.repository.RefereeRatingRepository;
 import offside.referee.repository.RefereeRepository;
 import offside.referee.repository.RefereeStarRepository;
+import offside.response.exception.CustomException;
+import offside.response.exception.CustomExceptionTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,9 +45,7 @@ public class RefereeService {
         refereeLocationRepository.save(new RefereeLocation(refereeId, location));
     }
     public void saveAllRefereeLocation(Integer refereeId, List<LocationEnum> locationList) {
-        final var refereeLocationList = locationList.stream().map(location -> {
-            return new RefereeLocation(refereeId, location);
-        }).toList();
+        final var refereeLocationList = locationList.stream().map(location -> new RefereeLocation(refereeId, location)).toList();
         refereeLocationRepository.saveAll(refereeLocationList);
     }
     
@@ -66,7 +66,7 @@ public class RefereeService {
     public Referee changeRefereeStatus(Integer refereeId, ChangeStatusDto newStatus){
         final var referee = refereeRepository.findById(refereeId);
         if(referee.isEmpty()){
-            throw new IllegalArgumentException("해당하는 심판 글이 없습니다.");
+            throw new CustomException(CustomExceptionTypes.REFEREE_NOT_FOUND);
         }
         referee.get().setStatus(newStatus.getStatus());
         return refereeRepository.save(referee.get());

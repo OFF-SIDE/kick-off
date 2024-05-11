@@ -12,37 +12,37 @@ import offside.LocationEnum;
 @Getter
 @Setter
 public class CreateRefereeHiringDto {
-    @NotNull
+    @NotNull(message = "userId를 입력해주세요")
     public Integer userId;
-    @NotBlank
+    @NotBlank(message = "title을 입력해주세요")
     public String title;
-    @NotNull
+    @NotNull(message = "price를 입력해주세요")
     public Integer price;
     
-    @NotNull
+    @NotNull(message = "stadiumId를 입력해주세요")
     public Integer stadiumId;
     
-    @NotBlank
+    @NotBlank(message = "userStadium을 입력해주세요")
     public String userStadium;
-    @NotBlank
+    @NotBlank(message = "comment를 입력해주세요")
     public String comment;
     
     public Boolean dateNego = false;
     public Boolean timeNego = false;
     public Boolean priceNego = false;
     
-    @NotNull
+    @NotNull(message = "category를 입력해주세요")
     public CategoryEnum category;
-    @NotNull
+    @NotNull(message = "location을 입력해주세요")
     public LocationEnum location;
-    @NotNull
+    @NotNull(message = "startDate를 입력해주세요")
     public LocalDateTime startDate;
-    @NotNull
+    @NotNull(message = "endDate를 입력해주세요")
     public LocalDateTime endDate;
     
-    @NotNull
+    @NotNull(message = "startTime을 입력해주세요")
     public Integer startTime;
-    @NotNull
+    @NotNull(message = "endTime을 입력해주세요")
     public Integer endTime;
     
     public CreateRefereeHiringDto() {}

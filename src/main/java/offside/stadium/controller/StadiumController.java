@@ -3,7 +3,7 @@ package offside.stadium.controller;
 import jakarta.validation.Valid;
 import java.util.List;
 import offside.response.ApiResponse;
-import offside.response.ValidationException;
+import offside.response.exception.CustomException;
 import offside.stadium.apiTypes.CreateStadiumByCrawlerDto;
 import offside.stadium.apiTypes.LocationSearchParamDto;
 import offside.stadium.apiTypes.RateStadiumDto;
@@ -41,7 +41,7 @@ public class StadiumController {
     @ResponseBody
     public ApiResponse<List<Stadium>> getStadiumListByCategoryAndRange(@Valid RangeSearchParamDto searchParamData, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
-            throw new ValidationException(bindingResult);
+            throw new CustomException(bindingResult);
         }
         return ApiResponse.createSuccess(stadiumService.getStadiumListByCategoryAndRange(searchParamData));
     }
@@ -50,7 +50,7 @@ public class StadiumController {
     @ResponseBody
     public ApiResponse<List<Stadium>> getStadiumListByCategoryAndLocation(@Valid LocationSearchParamDto searchParamData, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
-            throw new ValidationException(bindingResult);
+            throw new CustomException(bindingResult);
         }
         // 1. 해당 지역구에 category가 맞는 구장들 return (stadium만 가져오기)
         return ApiResponse.createSuccess(stadiumService.getStadiumListByCategoryAndLocation(searchParamData));
@@ -63,11 +63,19 @@ public class StadiumController {
         return ApiResponse.createSuccess(stadiumService.getStadiumListBySearch(searchName));
     }
     
+    /**
+     * 해당하는 구장에 좋아요 누르기
+     * @param stadiumId
+     * @param rateStadiumDto
+     * @param bindingResult
+     * @return
+     * @throw STADIUM_NOT_FOUND
+     */
     @PostMapping("{stadiumId}/rating")
     @ResponseBody
     public ApiResponse<StadiumRating> rateStadium(@PathVariable("stadiumId") Integer stadiumId, @Valid @RequestBody RateStadiumDto rateStadiumDto, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
-            throw new ValidationException(bindingResult);
+            throw new CustomException(bindingResult);
         }
         // 0. 해당 유저가 로그인되어 있는지 확인
         return ApiResponse.createSuccess(stadiumService.rateStadium(stadiumId, rateStadiumDto));
@@ -84,7 +92,7 @@ public class StadiumController {
     @ResponseBody
     public ApiResponse starStadium(@PathVariable("stadiumId") Integer stadiumId, @Valid @RequestBody UserRequestDto userData, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
-            throw new ValidationException(bindingResult);
+            throw new CustomException(bindingResult);
         }
         // star를 누르는 함수 -> star가 눌러지는 결과
         stadiumService.starStadium(userData.getUserId(), stadiumId);
@@ -95,7 +103,7 @@ public class StadiumController {
     @ResponseBody
     public ApiResponse unstarStadium(@PathVariable("stadiumId") Integer stadiumId, @Valid @RequestBody UserRequestDto userData, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
-            throw new ValidationException(bindingResult);
+            throw new CustomException(bindingResult);
         }
         // star를 제거하는 함수 -> star가 제거되는 결과
         stadiumService.unstarStadium(userData.getUserId(), stadiumId);
@@ -111,15 +119,4 @@ public class StadiumController {
     
     // 구장 목록 불러오기
     
-    
-    
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ApiResponse handleIllegalArgumentException(IllegalArgumentException exception){
-        return ApiResponse.createError(exception.getMessage());
-    }
-    
-    @ExceptionHandler(ValidationException.class)
-    public ApiResponse handleValidationException(ValidationException exception){
-        return ApiResponse.createFail(exception.bindingResult);
-    }
 }

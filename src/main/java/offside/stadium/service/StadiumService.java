@@ -2,6 +2,8 @@ package offside.stadium.service;
 
 import jakarta.transaction.Transactional;
 import offside.StadiumCategoryEnum;
+import offside.response.exception.CustomException;
+import offside.response.exception.CustomExceptionTypes;
 import offside.stadium.apiTypes.CreateStadiumDto;
 import offside.stadium.apiTypes.CreateStadiumInfoDto;
 import offside.stadium.apiTypes.LocationSearchParamDto;
@@ -38,10 +40,10 @@ public class StadiumService {
     
     
     /**
-          * @summary 구장과 해당 구장 정보를 최신화하는 함수
-          * @param stadiumData
-          * @param stadiumInfoDtoList
-          */
+      * @summary 구장과 해당 구장 정보를 최신화하는 함수
+      * @param stadiumData
+      * @param stadiumInfoDtoList
+      */
     public void createNewStadiumByCrawler(CreateStadiumDto stadiumData, List<CreateStadiumInfoDto> stadiumInfoDtoList){
          final var stadium = stadiumRepository.findByXAndYAndCategory(stadiumData.getX(), stadiumData.getY(), stadiumData.getCategory()); // 구장 이미 있나 확인
          if(stadium.isEmpty()){ // 없으면 -> 새로 생성
@@ -114,10 +116,16 @@ public class StadiumService {
         return stadiumRepository.findAllByIdIn(starStadiumIdList);
     }
     
+    /**
+     * 해당하는 구장이 있는 지 확인하여 반환. 없으면 에러
+     * @param stadiumId
+     * @return Stadium
+     * @throw STADIUM_NOT_FOUND
+     */
     public Stadium assertStadiumExist(Integer stadiumId){
         final var stadium = stadiumRepository.findById(stadiumId);
         if(stadium.isEmpty()){
-            throw new IllegalArgumentException("해당하는 구장이 없습니다.");
+            throw new CustomException(CustomExceptionTypes.STADIUM_NOT_FOUND);
         }
         return stadium.get();
     }

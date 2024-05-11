@@ -1,10 +1,8 @@
 package offside.referee.controller;
 
 import jakarta.validation.Valid;
-import java.sql.Ref;
 
 import java.util.List;
-import offside.StatusEnum;
 import offside.referee.apiTypes.ChangeStatusDto;
 import offside.referee.apiTypes.CreateRefereeHiringDto;
 import offside.referee.apiTypes.CreateRefereeJiwonDto;
@@ -13,7 +11,7 @@ import offside.referee.domain.Referee;
 import offside.referee.dto.RefereeSummaryDto;
 import offside.referee.service.RefereeService;
 import offside.response.ApiResponse;
-import offside.response.ValidationException;
+import offside.response.exception.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +31,7 @@ public class RefereeController {
     @ResponseBody
     public ApiResponse<Referee> refereeHiring(@Valid @RequestBody CreateRefereeHiringDto createRefereeHiringDto, BindingResult bindingResult){
         if(bindingResult.hasErrors()){ // 유효성 검사
-            throw new ValidationException(bindingResult);
+            throw new CustomException(bindingResult);
         }
         return ApiResponse.createSuccess(refereeService.refereeHiring(createRefereeHiringDto));
     }
@@ -44,7 +42,7 @@ public class RefereeController {
     @ResponseBody
     public ApiResponse<Referee> refereeJiwon(@RequestBody @Valid CreateRefereeJiwonDto createRefereeJiwonDto, BindingResult bindingResult){
         if(bindingResult.hasErrors()){ // 유효성 검사
-            throw new ValidationException(bindingResult);
+            throw new CustomException(bindingResult);
         }
         return ApiResponse.createSuccess(refereeService.refereeJiwon(createRefereeJiwonDto));
     }
@@ -54,7 +52,7 @@ public class RefereeController {
     @ResponseBody
     public ApiResponse<List<RefereeSummaryDto>> getRefereeList(@Valid RefereeSearchDto refereeSearchDto, BindingResult bindingResult){
         if(bindingResult.hasErrors()){ // 유효성 검사
-            throw new ValidationException(bindingResult);
+            throw new CustomException(bindingResult);
         }
         return ApiResponse.createSuccess(refereeService.getRefereeListBySearchDto(refereeSearchDto));
     }
@@ -65,9 +63,9 @@ public class RefereeController {
 //     4. 글 상태 변경하기 (사용자가 본인 글 마감처리)
     @PatchMapping("{refereeId}/status")
     @ResponseBody
-    public ApiResponse<Referee> changeStatus(@PathVariable("refereeId") Integer refereeId, @RequestBody ChangeStatusDto newStatus, BindingResult bindingResult){
+    public ApiResponse<Referee> changeStatus(@PathVariable("refereeId") Integer refereeId,@RequestBody @Valid ChangeStatusDto newStatus, BindingResult bindingResult){
         if(bindingResult.hasErrors()){ // 유효성 검사
-            throw new ValidationException(bindingResult);
+            throw new CustomException(bindingResult);
         }
         return ApiResponse.createSuccess(refereeService.changeRefereeStatus(refereeId, newStatus));
     }
@@ -79,16 +77,4 @@ public class RefereeController {
     
     
     // 7. 구인/지원 글 스크랩
-    
-    
-    
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ApiResponse handleIllegalArgumentException(IllegalArgumentException exception){
-        return ApiResponse.createError(exception.getMessage());
-    }
-    
-    @ExceptionHandler(ValidationException.class)
-    public ApiResponse handleValidationException(ValidationException exception){
-        return ApiResponse.createFail(exception.bindingResult);
-    }
 }
