@@ -12,6 +12,7 @@ public enum CustomExceptionTypes {
     TOKEN_UNAUTHORIZED_ERROR(1, HttpStatus.UNAUTHORIZED.value(), "잘못된 토큰입니다."),
     TOKEN_NOT_FOUND(2, HttpStatus.NOT_FOUND.value(), "토큰을 찾을 수 없습니다."),
     TOKEN_TIME_OUT(3, HttpStatus.NOT_FOUND.value(), "토큰이 만료되었습니다."),
+    ARTICLE_NOT_FOUND(4, HttpStatus.NOT_FOUND.value(), "해당하는 글이 없습니다."),
     
     
     // 1000 ~ 1999 : Auth 에러
@@ -24,7 +25,15 @@ public enum CustomExceptionTypes {
     
     // 3000 ~ 3999 : 심판 에러
     REFEREE_NOT_FOUND(3000, HttpStatus.NOT_FOUND.value(), "해당하는 심판글이 없습니다."),
-    REFEREE_UNAUTHORIZED(3001, HttpStatus.UNAUTHORIZED.value(), "해당 심판글에 접근 권한이 없습니다.");
+    REFEREE_UNAUTHORIZED(3001, HttpStatus.UNAUTHORIZED.value(), "해당 심판글에 접근 권한이 없습니다."),
+    
+    // 4000~4999 : 채팅에러
+    CHATROOM_NOT_FOUND(4000, HttpStatus.NOT_FOUND.value(), "해당하는 채팅방이 없습니다."),
+    CHAT_MYSELF_ERROR(4001, HttpStatus.FORBIDDEN.value(), "자기자신에게 채팅을 보낼 수 없습니다."),
+    
+    //5000~5999 : 공지사항 에러
+    NOTICE_NOT_FOUND(5000, HttpStatus.NOT_FOUND.value(),"해당하는 공지사항이 없습니다.");
+    
     
     Integer errorCode;
     Integer httpStatus;

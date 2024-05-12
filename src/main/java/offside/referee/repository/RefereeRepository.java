@@ -20,4 +20,6 @@ public interface RefereeRepository extends JpaRepository<Referee, Integer> {
     
     List<Referee> findTop3ByIsHiringOrderByCreatedAtDesc(Boolean isHiring);
     
+    List<Referee> findAllByIsHiringAndUserId(Boolean isHiring, Integer userId);
+    
 }

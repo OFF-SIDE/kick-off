@@ -10,7 +10,6 @@ import org.springframework.web.socket.WebSocketSession;
 @Getter
 @Setter
 public class ChatRoom {
-    
     private String roomId;
     private String name;
     private Set<WebSocketSession> sessions = new HashSet<>();

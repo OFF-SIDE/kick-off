@@ -1,6 +1,6 @@
 package offside.referee.service;
 
-import java.awt.print.Pageable;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,8 +20,6 @@ import offside.referee.repository.RefereeStarRepository;
 import offside.response.exception.CustomException;
 import offside.response.exception.CustomExceptionTypes;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -159,5 +157,9 @@ public class RefereeService {
             throw new CustomException(CustomExceptionTypes.REFEREE_NOT_FOUND);
         }
         return referee.get();
+    }
+    
+    public List<Referee> getMyArticle(Boolean isHiring, Integer userId) {
+        return refereeRepository.findAllByIsHiringAndUserId(isHiring, userId);
     }
 }

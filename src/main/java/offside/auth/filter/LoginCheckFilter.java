@@ -18,7 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class LoginCheckFilter extends OncePerRequestFilter {
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private final AuthService authService;
-    private static final String[] whitelist = {"/auth/login/*", "/auth/signup/*", "/stadium/crawler"};
+    private static final String[] whitelist = {"/auth/login/*", "/auth/signup/*", "/stadium/crawler", "/notice*"};
     
     @Autowired
     public LoginCheckFilter(AuthService authService){

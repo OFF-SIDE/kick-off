@@ -85,6 +85,17 @@ public class RefereeController {
         return ApiResponse.createSuccess(refereeService.miriboki(isHiring));
     }
     
+    @GetMapping("{isHiring}/myarticle")
+    @ResponseBody
+    public ApiResponse<List<Referee>> getMyArticle(@RequestParam("isHiring") Boolean isHiring, HttpServletRequest request,BindingResult bindingResult){
+        if(bindingResult.hasErrors()){ // 유효성 검사
+            throw new CustomException(bindingResult);
+        }
+        final var token = this.authService.getTokenFromHeader(request);
+        final var user = this.authService.getAccountDataFromJwt(token);
+        return ApiResponse.createSuccess(refereeService.getMyArticle(isHiring, user.getId()));
+    }
+    
     
     /**
      * 심판글 스크랩하기
