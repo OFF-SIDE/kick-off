@@ -14,8 +14,7 @@ import offside.LocationEnum;
 @Getter
 @Setter
 public class CreateRefereeJiwonDto {
-    @NotNull(message = "userId를 입력해주세요")
-    public Integer userId;
+    
     @NotNull(message = "category를 입력해주세요")
     public CategoryEnum category;
     @NotEmpty(message = "location을 입력해주세요")
@@ -42,12 +41,11 @@ public class CreateRefereeJiwonDto {
     
     public CreateRefereeJiwonDto() {}
     
-    public CreateRefereeJiwonDto(Integer userId, CategoryEnum category,
+    public CreateRefereeJiwonDto(CategoryEnum category,
         List<LocationEnum> locationList,
         LocalDateTime startDate, LocalDateTime endDate, Boolean dateNego, Integer startTime,
         Integer endTime, Boolean timeNego, Integer price, Boolean priceNego, String imgLink,
         String title, String comment) {
-        this.userId = userId;
         this.category = category;
         this.locationList = locationList;
         this.startDate = startDate;

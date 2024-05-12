@@ -5,9 +5,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 import offside.auth.service.AuthService;
-import offside.response.exception.CustomException;
-import offside.response.exception.CustomExceptionTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -19,7 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class LoginCheckFilter extends OncePerRequestFilter {
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private final AuthService authService;
-    private static final String[] whitelist = {"/auth/login/*", "/auth/signup/*", "stadium/crawler"};
+    private static final String[] whitelist = {"/auth/login/*", "/auth/signup/*", "/stadium/crawler"};
     
     @Autowired
     public LoginCheckFilter(AuthService authService){
@@ -30,7 +29,7 @@ public class LoginCheckFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
         FilterChain filterChain) throws ServletException, IOException {
 
-        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+        HttpServletRequest httpServletRequest = request;
         String requestURI = httpServletRequest.getRequestURI();
     
         if(isLoginCheckPath(requestURI)){

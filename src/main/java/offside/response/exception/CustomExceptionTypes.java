@@ -23,7 +23,8 @@ public enum CustomExceptionTypes {
     STADIUM_NOT_FOUND(2000, HttpStatus.NOT_FOUND.value(), "해당하는 구장이 없습니다."),
     
     // 3000 ~ 3999 : 심판 에러
-    REFEREE_NOT_FOUND(3000, HttpStatus.NOT_FOUND.value(), "해당하는 심판글이 없습니다.");
+    REFEREE_NOT_FOUND(3000, HttpStatus.NOT_FOUND.value(), "해당하는 심판글이 없습니다."),
+    REFEREE_UNAUTHORIZED(3001, HttpStatus.UNAUTHORIZED.value(), "해당 심판글에 접근 권한이 없습니다.");
     
     Integer errorCode;
     Integer httpStatus;

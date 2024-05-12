@@ -1,9 +1,8 @@
 package offside.referee.service;
 
-import jakarta.persistence.criteria.CriteriaBuilder.In;
+import java.awt.print.Pageable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import offside.LocationEnum;
 import offside.referee.apiTypes.ChangeStatusDto;
@@ -20,8 +19,9 @@ import offside.referee.repository.RefereeRepository;
 import offside.referee.repository.RefereeStarRepository;
 import offside.response.exception.CustomException;
 import offside.response.exception.CustomExceptionTypes;
-import offside.stadium.domain.Stadium;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -51,24 +51,47 @@ public class RefereeService {
         refereeLocationRepository.saveAll(refereeLocationList);
     }
     
-    public Referee refereeHiring(CreateRefereeHiringDto createRefereeHiringDto){
+    /**
+     * 구인글 작성
+     * @param userId
+     * @param createRefereeHiringDto
+     * @return
+     */
+    public Referee refereeHiring(Integer userId, CreateRefereeHiringDto createRefereeHiringDto){
         // 1. referee 구인 글 작성
-        final var referee = refereeRepository.save(new Referee(createRefereeHiringDto));
+        final var referee = refereeRepository.save(new Referee(userId,createRefereeHiringDto));
         // 2. referee 글 관련 entity 추가
         saveRefereeLocation(referee.getId(), createRefereeHiringDto.getLocation());
         return referee;
     }
     
-    public Referee refereeJiwon(CreateRefereeJiwonDto createRefereeJiwonDto){
-        final var referee = refereeRepository.save(new Referee(createRefereeJiwonDto));
+    /**
+     * 지원글 작성
+     * @param userId
+     * @param createRefereeJiwonDto
+     * @return
+     */
+    public Referee refereeJiwon(Integer userId, CreateRefereeJiwonDto createRefereeJiwonDto){
+        final var referee = refereeRepository.save(new Referee(userId, createRefereeJiwonDto));
         saveAllRefereeLocation(referee.getId(), createRefereeJiwonDto.getLocationList());
         return referee;
     }
-
-    public Referee changeRefereeStatus(Integer refereeId, ChangeStatusDto newStatus){
+    
+    /**
+     * 글 상태 변경하기. 본인 글만 가능
+     * @param refereeId
+     * @param userId
+     * @param newStatus
+     * @return Referee
+     * @throw REFEREE_NOT_FOUND, REFEREE_UNAUTHORIZED
+     */
+    public Referee changeRefereeStatus(Integer refereeId, Integer userId,ChangeStatusDto newStatus){
         final var referee = refereeRepository.findById(refereeId);
         if(referee.isEmpty()){
             throw new CustomException(CustomExceptionTypes.REFEREE_NOT_FOUND);
+        }
+        if(referee.get().getUserId() != userId){
+            throw new CustomException(CustomExceptionTypes.REFEREE_UNAUTHORIZED);
         }
         referee.get().setStatus(newStatus.getStatus());
         return refereeRepository.save(referee.get());
@@ -110,21 +133,24 @@ public class RefereeService {
         }
     }
 
-    public void refereeUnstar(Integer userId, Integer refereeId){
+    public void deleteRefereeStar(Integer userId, Integer refereeId){
         assertRefereeExist(refereeId);
         refereeStarRepository.deleteByUserIdAndRefereeId(userId, refereeId);
     }
-
-    public List<Referee> getStarRefereeList(Integer userId, Integer isHiring){
-        final var refereeStarList = refereeStarRepository.findAllByUserId(userId);
-        final var refereeIdList = refereeStarList
-                .stream()
-                .map(star -> star.getRefereeId())
-                .toList();
-        final var refereeList = refereeIdList
-                .stream()
-                .map();
-
+    
+    /**
+     * 심판 스크랩 목록 가져오기.
+     * @param userId
+     * @param isHiring
+     * @return
+     */
+    public List<Referee> getStarRefereeList(Integer userId, Boolean isHiring){
+        final var staredRefereeList = this.refereeStarRepository.getAllStaredReferee(userId, isHiring);
+        return staredRefereeList.stream().map(staredReferee -> (Referee) staredReferee[1]).toList();
+    }
+    
+    public List<Referee> miriboki(Boolean isHiring){
+        return refereeRepository.findTop3ByIsHiringOrderByCreatedAtDesc(isHiring);
     }
 
     public Referee assertRefereeExist(Integer refereeId){

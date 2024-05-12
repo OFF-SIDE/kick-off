@@ -12,8 +12,6 @@ import offside.LocationEnum;
 @Getter
 @Setter
 public class CreateRefereeHiringDto {
-    @NotNull(message = "userId를 입력해주세요")
-    public Integer userId;
     @NotBlank(message = "title을 입력해주세요")
     public String title;
     @NotNull(message = "price를 입력해주세요")
@@ -47,12 +45,11 @@ public class CreateRefereeHiringDto {
     
     public CreateRefereeHiringDto() {}
     
-    public CreateRefereeHiringDto(Integer userId, String title, Integer price, Integer stadiumId,
+    public CreateRefereeHiringDto(String title, Integer price, Integer stadiumId,
         String userStadium, String comment, Boolean dateNego, Boolean timeNego, Boolean priceNego,
         CategoryEnum category, LocationEnum location, LocalDateTime startDate,
         LocalDateTime endDate,
         Integer startTime, Integer endTime) {
-        this.userId = userId;
         this.title = title;
         this.price = price;
         this.stadiumId = stadiumId;

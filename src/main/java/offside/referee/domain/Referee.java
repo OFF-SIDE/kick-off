@@ -54,11 +54,10 @@ public class Referee {
     
     public Referee() {}
     
-    public Referee(Integer id, Integer userId, String title, Integer price, Integer stadiumId,
+    public Referee(Integer userId, String title, Integer price, Integer stadiumId,
         String userStadium, String imgLink, String comment, StatusEnum status, Boolean isHiring,
         CategoryEnum category, LocalDateTime startDate, LocalDateTime endDate, Boolean dateNego,
         Integer startTime, Integer endTime, Boolean timeNego, Boolean priceNego) {
-        this.id = id;
         this.userId = userId;
         this.title = title;
         this.price = price;
@@ -79,8 +78,8 @@ public class Referee {
         this.createdAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
     }
     
-    public Referee(CreateRefereeHiringDto createRefereeHiringDto) {
-        this.userId = createRefereeHiringDto.getUserId();
+    public Referee(Integer userId, CreateRefereeHiringDto createRefereeHiringDto) {
+        this.userId = userId;
         this.title = createRefereeHiringDto.getTitle();
         this.price = createRefereeHiringDto.getPrice();
         this.stadiumId = createRefereeHiringDto.getStadiumId();
@@ -101,8 +100,8 @@ public class Referee {
     }
     
     
-    public Referee(CreateRefereeJiwonDto createRefereeJiwonDto) {
-        this.userId = createRefereeJiwonDto.getUserId();
+    public Referee(Integer userId,CreateRefereeJiwonDto createRefereeJiwonDto) {
+        this.userId = userId;
         this.title = createRefereeJiwonDto.getTitle();
         this.price = createRefereeJiwonDto.getPrice();
         this.stadiumId = 0;

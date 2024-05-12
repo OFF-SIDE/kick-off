@@ -27,7 +27,12 @@ public class AuthController {
         this.authService = authService;
     }
     
-    // 로그인
+    /**
+     * 소셜 로그인
+     * @param socialLoginDto
+     * @param bindingResult
+     * @return
+     */
     @PostMapping("login/kakao")
     @ResponseBody
     public ApiResponse socialLogin(@RequestBody @Valid SocialLoginDto socialLoginDto, BindingResult bindingResult){
@@ -39,6 +44,12 @@ public class AuthController {
         return ApiResponse.createSuccess(jwtTokenDto, "로그인이 완료되었습니다.");
     }
     
+    /**
+     * 소셜 회원가입
+     * @param socialSignupDto
+     * @param bindingResult
+     * @return
+     */
     @PostMapping("signup/kakao")
     @ResponseBody
     public ApiResponse socialSignup(@RequestBody @Valid SocialSignupDto socialSignupDto, BindingResult bindingResult){
@@ -50,6 +61,11 @@ public class AuthController {
         return ApiResponse.createSuccess(jwtTokenDto, "회원가입이 완료되었습니다.");
     }
     
+    /**
+     * 내 정보 가져오기
+     * @param request
+     * @return
+     */
     @GetMapping("")
     @ResponseBody
     public ApiResponse getUserDataFromJwt(HttpServletRequest request){
@@ -57,6 +73,4 @@ public class AuthController {
         final var getUserData = authService.getAccountDataFromJwt(token);
         return ApiResponse.createSuccess(getUserData);
     }
-    
-    
 }
