@@ -3,11 +3,8 @@ package offside.referee.controller;
 import jakarta.validation.Valid;
 
 import java.util.List;
-import offside.referee.apiTypes.ChangeStatusDto;
-import offside.referee.apiTypes.CreateRefereeHiringDto;
-import offside.referee.apiTypes.CreateRefereeJiwonDto;
-import offside.referee.apiTypes.RefereeSearchDto;
-import offside.referee.apiTypes.RefereeUserRequestDto;
+
+import offside.referee.apiTypes.*;
 import offside.referee.domain.Referee;
 import offside.referee.dto.RefereeSummaryDto;
 import offside.referee.service.RefereeService;
@@ -78,12 +75,29 @@ public class RefereeController {
     
     
     // 7. 구인/지원 글 스크랩
-//    @PostMapping("{refereeId}/star")
-//    @ResponseBody
-//    public ApiResponse refereeStar(@PathVariable("refereeId") Integer refereeId, @RequestBody @Valid RefereeUserRequestDto refereeUserRequestDto, BindingResult bindingResult ){
-//        if(bindingResult.hasErrors()){ // 유효성 검사
-//            throw new CustomException(bindingResult);
-//        }
-//        return ApiResponse.createSuccess(refereeService.refereeStar(refereeUserRequestDto.getUserId()));
-//    }
+    @PostMapping("{refereeId}/star")
+    @ResponseBody
+    public ApiResponse refereeStar(@PathVariable("refereeId") Integer refereeId, @RequestBody @Valid RefereeUserRequestDto refereeUserRequestDto, BindingResult bindingResult ){
+        if(bindingResult.hasErrors()){ // 유효성 검사
+            throw new CustomException(bindingResult);
+        }
+        refereeService.refereeStar(refereeUserRequestDto.getUserId(), refereeId);
+        return ApiResponse.createSuccess("심판 스크랩 등록되었습니다.");
+    }
+
+    @PostMapping("{refereeId}/unstar")
+    @ResponseBody
+    public ApiResponse refereeUnstar(@PathVariable("refereeId") Integer refereeId, @RequestBody @Valid RefereeUserRequestDto refereeUserRequestDto, BindingResult bindingResult ){
+        if(bindingResult.hasErrors()){ // 유효성 검사
+            throw new CustomException(bindingResult);
+        }
+        refereeService.refereeUnstar(refereeUserRequestDto.getUserId(), refereeId);
+        return ApiResponse.createSuccess("심판 스크랩 해제되었습니다.");
+    }
+
+    @GetMapping("star")
+    @ResponseBody
+    public ApiResponse<List<Referee>> getStarRefereeList(@RequestBody @Valid RefereeUserRequestIsHiringDto refereeUserRequestIsHiringDto){
+        return ApiResponse.createSuccess(refereeService.getStarRefereeList(refereeUserRequestIsHiringDto.getUserId(), refereeUserRequestIsHiringDto.getIsHiring()));
+    }
 }

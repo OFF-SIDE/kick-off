@@ -12,6 +12,7 @@ import offside.referee.apiTypes.CreateRefereeJiwonDto;
 import offside.referee.apiTypes.RefereeSearchDto;
 import offside.referee.domain.Referee;
 import offside.referee.domain.RefereeLocation;
+import offside.referee.domain.RefereeStar;
 import offside.referee.dto.RefereeSummaryDto;
 import offside.referee.repository.RefereeLocationRepository;
 import offside.referee.repository.RefereeRatingRepository;
@@ -19,6 +20,7 @@ import offside.referee.repository.RefereeRepository;
 import offside.referee.repository.RefereeStarRepository;
 import offside.response.exception.CustomException;
 import offside.response.exception.CustomExceptionTypes;
+import offside.stadium.domain.Stadium;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -98,5 +100,38 @@ public class RefereeService {
             final var referee = refereeList.stream().filter(ref -> ref.getId() == refereeLocationId).findFirst();
             return new RefereeSummaryDto(referee.get(), locationMap.get(refereeLocationId));
         }).toList();
+
+    }
+    public void refereeStar(Integer userId, Integer refereeId){
+        assertRefereeExist(refereeId);
+        final var star = refereeStarRepository.findByUserIdAndRefereeId(userId, refereeId);
+        if(star.isEmpty()){
+            refereeStarRepository.save(new RefereeStar(userId, refereeId));
+        }
+    }
+
+    public void refereeUnstar(Integer userId, Integer refereeId){
+        assertRefereeExist(refereeId);
+        refereeStarRepository.deleteByUserIdAndRefereeId(userId, refereeId);
+    }
+
+    public List<Referee> getStarRefereeList(Integer userId, Integer isHiring){
+        final var refereeStarList = refereeStarRepository.findAllByUserId(userId);
+        final var refereeIdList = refereeStarList
+                .stream()
+                .map(star -> star.getRefereeId())
+                .toList();
+        final var refereeList = refereeIdList
+                .stream()
+                .map();
+
+    }
+
+    public Referee assertRefereeExist(Integer refereeId){
+        final var referee = refereeRepository.findById(refereeId);
+        if(referee.isEmpty()){
+            throw new CustomException(CustomExceptionTypes.REFEREE_NOT_FOUND);
+        }
+        return referee.get();
     }
 }
