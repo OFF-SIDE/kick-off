@@ -1,5 +1,6 @@
 package offside.auth.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import offside.CategoryEnum;
 import offside.LocationEnum;
 import offside.auth.apiTypes.SocialLoginDto;
@@ -21,6 +22,7 @@ public class AuthService {
     private final AccountRepository accountRepository;
     private final JwtService jwtService;
     private final String USER_INFO_URI = "https://kapi.kakao.com/v2/user/me";
+    private static final String AUTHORIZATION_HEADER = "Authorization";
     
     @Autowired
     public AuthService(AccountRepository accountRepository, JwtService jwtService) {
@@ -71,15 +73,24 @@ public class AuthService {
     
     public JwtAccountPayloadDto getAccountDataFromJwt(String accessToken){
         final var claims = this.jwtService.validateToken(accessToken);
-        
+
         final var id = claims.get("id",Integer.class);
         final var name= claims.get("name",String.class);
         final var nickname = claims.get("nickname", String.class);
         final var location = claims.get("location", String.class);
         final var category = claims.get("category", String.class);
-        if(id == null || name == null || nickname == null || location == null || category == null)
+        if(id == null || name == null || nickname == null || location == null || category == null){
             throw new CustomException(CustomExceptionTypes.TOKEN_UNAUTHORIZED_ERROR);
+        }
         return new JwtAccountPayloadDto(id,name,nickname, LocationEnum.valueOf(location),
             CategoryEnum.valueOf(category));
+    }
+    
+    public String getTokenFromHeader(HttpServletRequest request) throws CustomException{
+        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        throw new CustomException(CustomExceptionTypes.TOKEN_NOT_FOUND);
     }
 }

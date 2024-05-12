@@ -1,5 +1,6 @@
 package offside.auth.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import offside.auth.apiTypes.SocialLoginDto;
 import offside.auth.apiTypes.SocialSignupDto;
@@ -53,9 +54,11 @@ public class AuthController {
     
     @GetMapping("")
     @ResponseBody
-    public ApiResponse getUserDataFromJwt(){
-        final var getUserData = authService.getAccountDataFromJwt("1234");
+    public ApiResponse getUserDataFromJwt(HttpServletRequest request){
+        final var token = this.authService.getTokenFromHeader(request);
+        final var getUserData = authService.getAccountDataFromJwt(token);
         return ApiResponse.createSuccess(getUserData);
     }
+    
     
 }

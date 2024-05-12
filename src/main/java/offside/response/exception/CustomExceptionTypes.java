@@ -9,8 +9,10 @@ import org.springframework.http.HttpStatus;
 public enum CustomExceptionTypes {
     // 0~999 : 공통 에러
     VALIDATION_ERROR(0,HttpStatus.BAD_REQUEST.value(), "잘못된 API 요청입니다."),
-    TOKEN_UNAUTHORIZED_ERROR(1, HttpStatus.UNAUTHORIZED.value(), "AccessToken이 만료되었습니다."),
-    TOKEN_NOT_FOUND(2, HttpStatus.NOT_FOUND.value(), "AccessToken을 찾을 수 없습니다."),
+    TOKEN_UNAUTHORIZED_ERROR(1, HttpStatus.UNAUTHORIZED.value(), "잘못된 토큰입니다."),
+    TOKEN_NOT_FOUND(2, HttpStatus.NOT_FOUND.value(), "토큰을 찾을 수 없습니다."),
+    TOKEN_TIME_OUT(3, HttpStatus.NOT_FOUND.value(), "토큰이 만료되었습니다."),
+    
     
     // 1000 ~ 1999 : Auth 에러
     USER_ID_NOT_FOUND(1000, HttpStatus.BAD_REQUEST.value(), "userId 가 입력되지 않았습니다."),

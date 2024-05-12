@@ -53,7 +53,7 @@ public class JwtService {
      * JWT 에서 Claims 추출. 오류 시 에러
      * @param token
      * @return IsValidate
-     * @throw TOKEN_UNAUTHORIZED_ERROR
+     * @throw TOKEN_UNAUTHORIZED_ERROR, TOKEN_TIME_OUT
      */
     public Claims validateToken(String token) throws CustomException {
         try {
@@ -61,6 +61,7 @@ public class JwtService {
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
 //            log.info("Invalid JWT Token", e);
         } catch (ExpiredJwtException e) {
+            throw new CustomException(CustomExceptionTypes.TOKEN_TIME_OUT);
 //            log.info("Expired JWT Token", e);
         } catch (UnsupportedJwtException e) {
 //            log.info("Unsupported JWT Token", e);
