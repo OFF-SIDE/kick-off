@@ -1,11 +1,16 @@
 package offside.auth.service;
 
-import offside.auth.apiTypes.UserSocialLoginDto;
+import offside.CategoryEnum;
+import offside.LocationEnum;
+import offside.auth.apiTypes.SocialLoginDto;
+import offside.auth.apiTypes.SocialSignupDto;
+import offside.auth.domain.Account;
 import offside.auth.dto.JwtAccountPayloadDto;
-import offside.auth.dto.JwtSignupPayloadDto;
+import offside.auth.dto.JwtTokenDto;
 import offside.auth.dto.KakaoUserInfoResponse;
-import offside.auth.dto.SocialLoginResponseDto;
 import offside.auth.repository.AccountRepository;
+import offside.response.exception.CustomException;
+import offside.response.exception.CustomExceptionTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -14,13 +19,13 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class AuthService {
     
     private final AccountRepository accountRepository;
-    private final JwtGenerator jwtGenerator;
+    private final JwtService jwtService;
     private final String USER_INFO_URI = "https://kapi.kakao.com/v2/user/me";
     
     @Autowired
-    public AuthService(AccountRepository accountRepository, JwtGenerator jwtGenerator) {
+    public AuthService(AccountRepository accountRepository, JwtService jwtService) {
         this.accountRepository = accountRepository;
-        this.jwtGenerator = jwtGenerator;
+        this.jwtService = jwtService;
     }
     
     // 카카오에서 사용자 정보 가져오기 by 토큰
@@ -34,17 +39,47 @@ public class AuthService {
         return webClientResponse.blockFirst();
     }
     
-    public SocialLoginResponseDto socialLogin(UserSocialLoginDto userSocialLoginDto){
-        final var kakaoUserInfo = getKakaoDataByToken(userSocialLoginDto.getUserId());
-        
-        final var account = this.accountRepository.findByOauthId(kakaoUserInfo.getId().toString());
+    /**
+     * 소셜로그인을 진행하는 함수. 가입 정보 없을 시 에러
+     * @param socialLoginDto
+     * @return JwtTokenDto
+     * @throw USER_NOT_FOUND;
+     */
+    public JwtTokenDto socialLogin(SocialLoginDto socialLoginDto){
+        final var account = this.accountRepository.findByOauthId(socialLoginDto.getOauthId());
         if(account.isEmpty()){
-            final var jwtToken= jwtGenerator.generateSignupToken(new JwtSignupPayloadDto(kakaoUserInfo.getId().intValue(), kakaoUserInfo.getKakao_account().getName()));
-            return new SocialLoginResponseDto(jwtToken,false);
+            throw new CustomException(CustomExceptionTypes.USER_NOT_FOUND);
         }
-        final var jwtToken= jwtGenerator.generateLoginToken(new JwtAccountPayloadDto(account.get().id, account.get().nickname, account.get().location, account.get().category));
-        return new SocialLoginResponseDto(jwtToken,true);
+        return jwtService.createLoginToken(new JwtAccountPayloadDto(account.get().id, account.get().getName(),account.get().nickname, account.get().location, account.get().category));
     }
     
+    /**
+     * 소셜 회원가입을 진행하는 함수. 이미 가입 유저 시 에러.
+     * @param socialSignupDto
+     * @return JwtTokenDto
+     * @throw USER_ALREADY_EXIST
+     */
+    public JwtTokenDto socialSignup(SocialSignupDto socialSignupDto){
+        final var previousAccount = this.accountRepository.findByOauthId(socialSignupDto.getOauthId());
+        if(previousAccount.isPresent()){
+            throw new CustomException(CustomExceptionTypes.USER_ALREADY_EXIST);
+        }
+        
+        final var account = accountRepository.save(new Account(socialSignupDto));
+        return jwtService.createLoginToken(new JwtAccountPayloadDto(account.getId(),account.getName(), account.getNickname(), account.getLocation(), account.getCategory()));
+    }
     
+    public JwtAccountPayloadDto getAccountDataFromJwt(String accessToken){
+        final var claims = this.jwtService.validateToken(accessToken);
+        
+        final var id = claims.get("id",Integer.class);
+        final var name= claims.get("name",String.class);
+        final var nickname = claims.get("nickname", String.class);
+        final var location = claims.get("location", String.class);
+        final var category = claims.get("category", String.class);
+        if(id == null || name == null || nickname == null || location == null || category == null)
+            throw new CustomException(CustomExceptionTypes.TOKEN_UNAUTHORIZED_ERROR);
+        return new JwtAccountPayloadDto(id,name,nickname, LocationEnum.valueOf(location),
+            CategoryEnum.valueOf(category));
+    }
 }

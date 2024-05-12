@@ -6,11 +6,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import lombok.Getter;
 import lombok.Setter;
 import offside.CategoryEnum;
 import offside.LocationEnum;
 import offside.auth.SocialProviderEnum;
+import offside.auth.apiTypes.SocialSignupDto;
 
 @Entity
 @Getter
@@ -44,10 +46,8 @@ public class Account {
     
     public Account() {}
     
-    public Account(Integer id, String oauthId, SocialProviderEnum socialProvider, String name,
-        String nickname, LocationEnum location, CategoryEnum category, String profileImage,
-        LocalDateTime createdAt) {
-        this.id = id;
+    public Account(String oauthId, SocialProviderEnum socialProvider, String name,
+        String nickname, LocationEnum location, CategoryEnum category, String profileImage) {
         this.oauthId = oauthId;
         this.socialProvider = socialProvider;
         this.name = name;
@@ -55,6 +55,17 @@ public class Account {
         this.location = location;
         this.category = category;
         this.profileImage = profileImage;
-        this.createdAt = createdAt;
+        this.createdAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+    }
+    
+    public Account(SocialSignupDto socialSignupDto){
+        this.oauthId = socialSignupDto.getOauthId();
+        this.socialProvider = socialSignupDto.getSocialProvider();
+        this.name = socialSignupDto.getName();
+        this.nickname = socialSignupDto.getNickname();
+        this.location = socialSignupDto.getLocation();
+        this.category = socialSignupDto.getCategory();
+        this.profileImage = "";
+        this.createdAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
     }
 }

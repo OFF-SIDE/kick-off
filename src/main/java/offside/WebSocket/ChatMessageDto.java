@@ -1,4 +1,4 @@
-package WebSocket;
+package offside.WebSocket;
 
 
 import lombok.*;

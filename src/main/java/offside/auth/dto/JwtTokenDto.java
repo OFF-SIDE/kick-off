@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class JwtTokenDto {
-    String accessToken;
+    private String accessToken;
     
     public JwtTokenDto(String accessToken) {
         this.accessToken = accessToken;

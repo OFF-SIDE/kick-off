@@ -1,5 +1,6 @@
 package offside.auth.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import offside.CategoryEnum;
@@ -7,17 +8,11 @@ import offside.LocationEnum;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class JwtAccountPayloadDto {
     Integer id;
+    String name;
     String nickname;
     LocationEnum location;
     CategoryEnum category;
-    
-    public JwtAccountPayloadDto(Integer id, String nickname, LocationEnum location,
-        CategoryEnum category) {
-        this.id = id;
-        this.nickname = nickname;
-        this.location = location;
-        this.category = category;
-    }
 }

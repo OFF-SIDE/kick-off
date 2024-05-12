@@ -1,4 +1,4 @@
-package WebSocket;
+package offside.WebSocket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
