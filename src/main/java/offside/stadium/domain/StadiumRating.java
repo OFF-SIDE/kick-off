@@ -17,8 +17,8 @@ public class StadiumRating {
     public Integer rating;
     public String comment;
     
-    public StadiumRating(Integer stadiumId, RateStadiumDto rateStadiumDto) {
-        this.userId = rateStadiumDto.userId;
+    public StadiumRating(Integer stadiumId, Integer userId, RateStadiumDto rateStadiumDto) {
+        this.userId = userId;
         this.stadiumId = stadiumId;
         this.rating = rateStadiumDto.rating;
         this.comment = rateStadiumDto.comment;

@@ -78,11 +78,18 @@ public class StadiumService {
         }
     }
     
-    public StadiumRating rateStadium(Integer stadiumId, RateStadiumDto rateStadiumDto){
+    /**
+     * 해당 구장을 평가하는 함수.
+     * @param stadiumId
+     * @param userId
+     * @param rateStadiumDto
+     * @return StadiumRating
+     */
+    public StadiumRating rateStadium(Integer stadiumId, Integer userId, RateStadiumDto rateStadiumDto){
         final var stadium = assertStadiumExist(stadiumId);
         
         stadiumRepository.updateRating(stadium.getId(), stadium.getTotalRating() + rateStadiumDto.rating, stadium.getRatingPeople() + 1);
-        return stadiumRatingRepository.save(new StadiumRating(stadiumId, rateStadiumDto));
+        return stadiumRatingRepository.save(new StadiumRating(stadiumId, userId, rateStadiumDto));
     }
     
     public StadiumWithInfoAndRatingAndStar getStadiumInformation(Integer stadiumId, Integer userId){

@@ -1,7 +1,9 @@
 package offside.stadium.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.List;
+import offside.auth.service.AuthService;
 import offside.response.ApiResponse;
 import offside.response.exception.CustomException;
 import offside.stadium.apiTypes.CreateStadiumByCrawlerDto;
@@ -21,10 +23,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("stadium")
 public class StadiumController {
     private final StadiumService stadiumService;
+    private final AuthService authService;
     
     @Autowired
-    public StadiumController(StadiumService stadiumService) {
+    public StadiumController(StadiumService stadiumService,AuthService authService) {
         this.stadiumService = stadiumService;
+        this.authService = authService;
     }
     
     @PostMapping("crawler")
@@ -64,57 +68,91 @@ public class StadiumController {
     }
     
     /**
-     * 해당하는 구장에 좋아요 누르기
+     * 구장 평가하기
+     * @param request
      * @param stadiumId
      * @param rateStadiumDto
      * @param bindingResult
-     * @return
-     * @throw STADIUM_NOT_FOUND
+     * @return StadiumRating
      */
     @PostMapping("{stadiumId}/rating")
     @ResponseBody
-    public ApiResponse<StadiumRating> rateStadium(@PathVariable("stadiumId") Integer stadiumId, @Valid @RequestBody RateStadiumDto rateStadiumDto, BindingResult bindingResult){
+    public ApiResponse<StadiumRating> rateStadium(HttpServletRequest request,@PathVariable("stadiumId") Integer stadiumId,
+        @Valid @RequestBody RateStadiumDto rateStadiumDto, BindingResult bindingResult) throws CustomException{
         if(bindingResult.hasErrors()){
             throw new CustomException(bindingResult);
         }
+        final var token = this.authService.getTokenFromHeader(request);
+        final var user = this.authService.getAccountDataFromJwt(token);
+        
         // 0. 해당 유저가 로그인되어 있는지 확인
-        return ApiResponse.createSuccess(stadiumService.rateStadium(stadiumId, rateStadiumDto));
+        return ApiResponse.createSuccess(stadiumService.rateStadium(stadiumId, user.getId(), rateStadiumDto));
     }
-
-    //구장 상세보기
+    
+    /**
+     * 구장 상세보기
+     * @param request
+     * @param stadiumId
+     * @return StadiumWithInfoAndRatingAndStar
+     */
     @GetMapping("{stadiumId}")
     @ResponseBody
-    public ApiResponse<StadiumWithInfoAndRatingAndStar> getStadiumInformation(@PathVariable("stadiumId") Integer stadiumId,@RequestParam("userId") Integer userId) {
-        return ApiResponse.createSuccess(stadiumService.getStadiumInformation(stadiumId, userId));
+    public ApiResponse<StadiumWithInfoAndRatingAndStar> getStadiumInformation(HttpServletRequest request,
+        @PathVariable("stadiumId") Integer stadiumId) {
+        final var token = this.authService.getTokenFromHeader(request);
+        final var user = this.authService.getAccountDataFromJwt(token);
+        
+        return ApiResponse.createSuccess(stadiumService.getStadiumInformation(stadiumId, user.getId()));
     }
 
     @PostMapping("{stadiumId}/star")
     @ResponseBody
-    public ApiResponse starStadium(@PathVariable("stadiumId") Integer stadiumId, @Valid @RequestBody UserRequestDto userData, BindingResult bindingResult){
+    public ApiResponse starStadium(HttpServletRequest request, @PathVariable("stadiumId") Integer stadiumId,
+        BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             throw new CustomException(bindingResult);
         }
-        // star를 누르는 함수 -> star가 눌러지는 결과
-        stadiumService.starStadium(userData.getUserId(), stadiumId);
+        final var token = this.authService.getTokenFromHeader(request);
+        final var user = this.authService.getAccountDataFromJwt(token);
+        
+        stadiumService.starStadium(user.getId(), stadiumId);
         return ApiResponse.createSuccess("구장에 즐겨찾기가 되었습니다.");
     }
     
+    /**
+     * 구장 즐겨찾기 해제
+     * @param request
+     * @param stadiumId
+     * @param bindingResult
+     * @return
+     */
     @PostMapping("{stadiumId}/unstar")
     @ResponseBody
-    public ApiResponse unstarStadium(@PathVariable("stadiumId") Integer stadiumId, @Valid @RequestBody UserRequestDto userData, BindingResult bindingResult){
+    public ApiResponse unstarStadium(HttpServletRequest request, @PathVariable("stadiumId") Integer stadiumId,
+        BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             throw new CustomException(bindingResult);
         }
+        final var token = this.authService.getTokenFromHeader(request);
+        final var user = this.authService.getAccountDataFromJwt(token);
+        
         // star를 제거하는 함수 -> star가 제거되는 결과
-        stadiumService.unstarStadium(userData.getUserId(), stadiumId);
+        stadiumService.unstarStadium(user.getId(), stadiumId);
         return ApiResponse.createSuccess("구장 즐겨찾기가 해제되었습니다.");
     }
     
+    /**
+     * 즐겨찾기한 구장 목록 가져오기
+     * @param request
+     * @return
+     */
     @GetMapping("star")
     @ResponseBody
-    public ApiResponse<List<Stadium>> getStarStadiumList(@RequestParam("userId") Integer userId){
-        System.out.println(userId);
-        return ApiResponse.createSuccess(stadiumService.getStarStadiumList(userId));
+    public ApiResponse<List<Stadium>> getStarStadiumList(HttpServletRequest request){
+        final var token = this.authService.getTokenFromHeader(request);
+        final var user = this.authService.getAccountDataFromJwt(token);
+        
+        return ApiResponse.createSuccess(stadiumService.getStarStadiumList(user.getId()));
     }
     
     // 구장 목록 불러오기
