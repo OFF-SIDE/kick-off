@@ -3,6 +3,7 @@ package offside.auth.service;
 import jakarta.servlet.http.HttpServletRequest;
 import offside.CategoryEnum;
 import offside.LocationEnum;
+import offside.auth.SocialProviderEnum;
 import offside.auth.apiTypes.SocialLoginDto;
 import offside.auth.apiTypes.SocialSignupDto;
 import offside.auth.domain.Account;
@@ -48,7 +49,7 @@ public class AuthService {
      * @throw USER_NOT_FOUND;
      */
     public JwtTokenDto socialLogin(SocialLoginDto socialLoginDto){
-        final var account = this.accountRepository.findByOauthId(socialLoginDto.getOauthId());
+        final var account = this.accountRepository.findByOauthIdAndSocialProvider(socialLoginDto.getOauthId(), SocialProviderEnum.KAKAO);
         if(account.isEmpty()){
             throw new CustomException(CustomExceptionTypes.USER_NOT_FOUND);
         }
@@ -62,11 +63,11 @@ public class AuthService {
      * @throw USER_ALREADY_EXIST
      */
     public JwtTokenDto socialSignup(SocialSignupDto socialSignupDto){
-        final var previousAccount = this.accountRepository.findByOauthId(socialSignupDto.getOauthId());
+        final var previousAccount = this.accountRepository.findByOauthIdAndSocialProvider(socialSignupDto.getOauthId(), SocialProviderEnum.KAKAO);
         if(previousAccount.isPresent()){
             throw new CustomException(CustomExceptionTypes.USER_ALREADY_EXIST);
         }
-        
+
         final var account = accountRepository.save(new Account(socialSignupDto));
         return jwtService.createLoginToken(new JwtAccountPayloadDto(account.getId(),account.getName(), account.getNickname(), account.getLocation(), account.getCategory()));
     }

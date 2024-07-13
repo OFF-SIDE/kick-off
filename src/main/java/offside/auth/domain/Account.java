@@ -22,7 +22,7 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Integer id;
     
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     public String oauthId;
     @Column(nullable = false)
     public SocialProviderEnum socialProvider;

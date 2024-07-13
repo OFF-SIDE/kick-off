@@ -159,7 +159,7 @@ public class RefereeService {
         return referee.get();
     }
     
-    public List<Referee> getMyArticle(Boolean isHiring, Integer userId) {
-        return refereeRepository.findAllByIsHiringAndUserId(isHiring, userId);
+    public List<Referee> getMyArticleList(Integer userId, Boolean isHiring) {
+        return refereeRepository.findAllByUserIdAndIsHiring(userId,isHiring);
     }
 }

@@ -6,8 +6,6 @@ import java.util.List;
 import offside.CategoryEnum;
 import offside.StatusEnum;
 import offside.referee.domain.Referee;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -20,6 +18,5 @@ public interface RefereeRepository extends JpaRepository<Referee, Integer> {
     
     List<Referee> findTop3ByIsHiringOrderByCreatedAtDesc(Boolean isHiring);
     
-    List<Referee> findAllByIsHiringAndUserId(Boolean isHiring, Integer userId);
-    
+    List<Referee> findAllByUserIdAndIsHiring(Integer userId,Boolean isHiring);
 }

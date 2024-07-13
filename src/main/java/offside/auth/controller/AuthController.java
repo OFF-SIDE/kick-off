@@ -73,4 +73,6 @@ public class AuthController {
         final var getUserData = authService.getAccountDataFromJwt(token);
         return ApiResponse.createSuccess(getUserData);
     }
+    
+    
 }
