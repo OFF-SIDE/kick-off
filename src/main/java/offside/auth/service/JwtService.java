@@ -33,6 +33,7 @@ public class JwtService {
         claims.put("nickname", jwtAccountPayloadDto.getNickname());
         claims.put("location", jwtAccountPayloadDto.getLocation());
         claims.put("category", jwtAccountPayloadDto.getCategory());
+        claims.put("profileImage", jwtAccountPayloadDto.getProfileImage());
         
         return new JwtTokenDto(createToken(claims));
     }

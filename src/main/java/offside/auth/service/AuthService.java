@@ -53,7 +53,7 @@ public class AuthService {
         if(account.isEmpty()){
             throw new CustomException(CustomExceptionTypes.USER_NOT_FOUND);
         }
-        return jwtService.createLoginToken(new JwtAccountPayloadDto(account.get().id, account.get().getName(),account.get().nickname, account.get().location, account.get().category));
+        return jwtService.createLoginToken(new JwtAccountPayloadDto(account.get().id, account.get().getName(),account.get().nickname, account.get().location, account.get().category, account.get().profileImage));
     }
     
     /**
@@ -69,9 +69,15 @@ public class AuthService {
         }
 
         final var account = accountRepository.save(new Account(socialSignupDto));
-        return jwtService.createLoginToken(new JwtAccountPayloadDto(account.getId(),account.getName(), account.getNickname(), account.getLocation(), account.getCategory()));
+        return jwtService.createLoginToken(new JwtAccountPayloadDto(account.getId(),account.getName(), account.getNickname(), account.getLocation(), account.getCategory(), account.getProfileImage()));
     }
     
+    /**
+     * @summary JWT 토큰에서 계정 정보 추출
+     * @param accessToken
+     * @return JwtAccountPayloadDto
+     * @throw TOKEN_UNAUTHORIZED_ERROR
+     */
     public JwtAccountPayloadDto getAccountDataFromJwt(String accessToken){
         final var claims = this.jwtService.validateToken(accessToken);
 
@@ -84,7 +90,7 @@ public class AuthService {
             throw new CustomException(CustomExceptionTypes.TOKEN_UNAUTHORIZED_ERROR);
         }
         return new JwtAccountPayloadDto(id,name,nickname, LocationEnum.valueOf(location),
-            CategoryEnum.valueOf(category));
+            CategoryEnum.valueOf(category), profileImage);
     }
     
     public String getTokenFromHeader(HttpServletRequest request) throws CustomException{

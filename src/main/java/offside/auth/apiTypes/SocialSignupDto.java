@@ -24,6 +24,8 @@ public class SocialSignupDto {
     private LocationEnum location;
     @NotNull(message = "category를 입력해주세요")
     private CategoryEnum category;
+    
+    private String profileImage;
     private SocialProviderEnum socialProvider = SocialProviderEnum.KAKAO;
     
     public SocialSignupDto() {

@@ -15,4 +15,5 @@ public class JwtAccountPayloadDto {
     String nickname;
     LocationEnum location;
     CategoryEnum category;
+    String profileImage;
 }

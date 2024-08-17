@@ -38,6 +38,7 @@ public class Account {
     @Column(nullable = false)
     public CategoryEnum category;
     
+    @Column(nullable = false)
     public String profileImage;
     
     @Column(nullable = false)
@@ -65,7 +66,7 @@ public class Account {
         this.nickname = socialSignupDto.getNickname();
         this.location = socialSignupDto.getLocation();
         this.category = socialSignupDto.getCategory();
-        this.profileImage = "";
+        this.profileImage = socialSignupDto.getProfileImage() == null ? "default" : socialSignupDto.getProfileImage(); // TODO : default 이미지 링크 추가
         this.createdAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
     }
 }
