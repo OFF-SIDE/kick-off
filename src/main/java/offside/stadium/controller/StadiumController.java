@@ -6,14 +6,11 @@ import java.util.List;
 import offside.auth.service.AuthService;
 import offside.response.ApiResponse;
 import offside.response.exception.CustomException;
-import offside.stadium.apiTypes.CreateStadiumByCrawlerDto;
-import offside.stadium.apiTypes.LocationSearchParamDto;
-import offside.stadium.apiTypes.RateStadiumDto;
-import offside.stadium.apiTypes.RangeSearchParamDto;
-import offside.stadium.apiTypes.UserRequestDto;
+import offside.stadium.apiTypes.*;
 import offside.stadium.domain.Stadium;
 import offside.stadium.domain.StadiumRating;
 import offside.stadium.dto.StadiumWithInfoAndRatingAndStar;
+import offside.stadium.dto.StadiumWithStarDto;
 import offside.stadium.service.StadiumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
@@ -43,7 +40,7 @@ public class StadiumController {
     
     @GetMapping("range")
     @ResponseBody
-    public ApiResponse<List<Stadium>> getStadiumListByCategoryAndRange(@Valid RangeSearchParamDto searchParamData, BindingResult bindingResult){
+    public ApiResponse<List<StadiumWithStarDto>> getStadiumListByCategoryAndRange(@Valid RangeSearchParamDto searchParamData, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             throw new CustomException(bindingResult);
         }
@@ -52,7 +49,7 @@ public class StadiumController {
     
     @GetMapping("location")
     @ResponseBody
-    public ApiResponse<List<Stadium>> getStadiumListByCategoryAndLocation(@Valid LocationSearchParamDto searchParamData, BindingResult bindingResult){
+    public ApiResponse<List<StadiumWithStarDto>> getStadiumListByCategoryAndLocation(@Valid LocationSearchParamDto searchParamData, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             throw new CustomException(bindingResult);
         }
@@ -62,9 +59,12 @@ public class StadiumController {
 
     @GetMapping("search")
     @ResponseBody
-    public ApiResponse<List<Stadium>> getStadiumListBySearchName(@RequestParam("name") String searchName){
+    public ApiResponse<List<StadiumWithStarDto>> getStadiumListBySearchName(@Valid NameSearchParamDto searchParamData, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            throw new CustomException(bindingResult);
+        }
         // 1. 해당 이름이 포함되어 있는 구장이 있는지 return (stadium만 가져오기)
-        return ApiResponse.createSuccess(stadiumService.getStadiumListBySearch(searchName));
+        return ApiResponse.createSuccess(stadiumService.getStadiumListBySearch(searchParamData));
     }
     
     /**

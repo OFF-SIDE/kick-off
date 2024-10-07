@@ -16,4 +16,5 @@ public class LocationSearchParamDto{
     StadiumCategoryEnum category;
     @NotNull(message = "지역구를 선택해주세요!")
     List<LocationEnum> location;
+    public Integer userId;
 }

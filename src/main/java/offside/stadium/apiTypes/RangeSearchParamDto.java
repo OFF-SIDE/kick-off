@@ -20,6 +20,7 @@ public class RangeSearchParamDto {
     float endX;
     @NotNull(message = "끝나는 Y가 필요합니다.")
     float endY;
+    public Integer userId;
     
     public RangeSearchParamDto(StadiumCategoryEnum category, float startX, float startY, float endX, float endY) {
         this.category = category;

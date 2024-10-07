@@ -4,16 +4,13 @@ import jakarta.transaction.Transactional;
 import offside.StadiumCategoryEnum;
 import offside.response.exception.CustomException;
 import offside.response.exception.CustomExceptionTypes;
-import offside.stadium.apiTypes.CreateStadiumDto;
-import offside.stadium.apiTypes.CreateStadiumInfoDto;
-import offside.stadium.apiTypes.LocationSearchParamDto;
-import offside.stadium.apiTypes.RateStadiumDto;
-import offside.stadium.apiTypes.RangeSearchParamDto;
+import offside.stadium.apiTypes.*;
 import offside.stadium.domain.Stadium;
 import offside.stadium.domain.StadiumInfo;
 import offside.stadium.domain.StadiumRating;
 import offside.stadium.domain.StadiumStar;
 import offside.stadium.dto.StadiumWithInfoAndRatingAndStar;
+import offside.stadium.dto.StadiumWithStarDto;
 import offside.stadium.repository.StadiumInfoRepository;
 import offside.stadium.repository.StadiumRatingRepository;
 import offside.stadium.repository.StadiumRepository;
@@ -22,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -57,25 +55,47 @@ public class StadiumService {
          }
     }
 //
-    public List<Stadium> getStadiumListBySearch(String searchName){
-        return stadiumRepository.findAllBySearchName(searchName);
+    public List<StadiumWithStarDto> getStadiumListBySearch(NameSearchParamDto searchParamData){
+        final var userId = searchParamData.getUserId();
+        List<Stadium> stadiumList = stadiumRepository.findAllBySearchName(searchParamData.getSearchName());
+        List<StadiumStar> starList = stadiumStarRepository.findAllByUserId(userId);
+        return stadiumList.stream()
+                .map(stadium -> new StadiumWithStarDto(stadium,
+                        starList.contains(new StadiumStar(stadium.getId(), userId)) // 즐겨찾기 여부 확인
+                ))
+                .toList();
     }
-    public List<Stadium> getStadiumListByCategoryAndRange(RangeSearchParamDto searchParamData){
+    public List<StadiumWithStarDto> getStadiumListByCategoryAndRange(RangeSearchParamDto searchParamData){
         float startX = searchParamData.getStartX();
         float startY = searchParamData.getStartY();
         float endX = searchParamData.getEndX();
         float endY = searchParamData.getEndY();
         final var category = searchParamData.getCategory();
+        final var userId = searchParamData.getUserId();
 
-        return stadiumRepository.findAllBetweenLocationAndByCategory(category,startX,endX,startY,endY);
+        List<Stadium> stadiumList = stadiumRepository.findAllBetweenLocationAndByCategory(category,startX,endX,startY,endY);
+        List<StadiumStar> starList = stadiumStarRepository.findAllByUserId(userId);
+
+        return stadiumList.stream()
+                .map(stadium -> new StadiumWithStarDto(stadium,
+                        starList.contains(new StadiumStar(stadium.getId(), userId)) // 즐겨찾기 여부 확인
+                ))
+                .toList();
     }
-    
-    public List<Stadium> getStadiumListByCategoryAndLocation(LocationSearchParamDto searchParamDto){
-        if(searchParamDto.getLocation().size() == 1){
-            return stadiumRepository.findAllByCategoryAndLocation(searchParamDto.getCategory(), searchParamDto.getLocation().get(0));
-        }else{
-            return stadiumRepository.findAllByCategoryAndLocationIn(searchParamDto.getCategory(), searchParamDto.getLocation());
-        }
+
+    public List<StadiumWithStarDto> getStadiumListByCategoryAndLocation(LocationSearchParamDto searchParamDto) {
+        final var userId = searchParamDto.getUserId();
+        List<Stadium> stadiumList = searchParamDto.getLocation().size() == 1
+                ? stadiumRepository.findAllByCategoryAndLocation(searchParamDto.getCategory(), searchParamDto.getLocation().get(0))
+                : stadiumRepository.findAllByCategoryAndLocationIn(searchParamDto.getCategory(), searchParamDto.getLocation());
+
+        List<StadiumStar> starList = stadiumStarRepository.findAllByUserId(userId);
+
+        return stadiumList.stream()
+                .map(stadium -> new StadiumWithStarDto(stadium,
+                        starList.contains(new StadiumStar(stadium.getId(), userId)) // 즐겨찾기 여부 확인
+                ))
+                .toList();
     }
     
     /**
