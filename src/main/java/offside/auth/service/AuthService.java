@@ -10,6 +10,7 @@ import offside.auth.domain.Account;
 import offside.auth.dto.JwtAccountPayloadDto;
 import offside.auth.dto.JwtTokenDto;
 import offside.auth.dto.KakaoUserInfoResponse;
+import offside.auth.dto.UpdateUserInfoDto;
 import offside.auth.repository.AccountRepository;
 import offside.response.exception.CustomException;
 import offside.response.exception.CustomExceptionTypes;
@@ -99,5 +100,27 @@ public class AuthService {
             return bearerToken.substring(7);
         }
         throw new CustomException(CustomExceptionTypes.TOKEN_NOT_FOUND);
+    }
+
+    public void updateUserInfo(UpdateUserInfoDto updateUserInfoDto) {
+        final var newCategory = updateUserInfoDto.getCategory();
+        final var newLocation = updateUserInfoDto.getLocation();
+        final var userId = updateUserInfoDto.getId();
+
+        // findById로 유저를 조회하고 존재 여부를 확인
+        var accountOptional = accountRepository.findById(userId);
+
+        if (accountOptional.isPresent()) {
+            var account = accountOptional.get();
+
+            // 필드 값 설정
+            account.setCategory(newCategory);
+            account.setLocation(newLocation);
+
+            // 변경된 객체 저장
+            accountRepository.save(account);
+        } else {
+            throw new IllegalArgumentException("User with ID " + userId + " not found.");
+        }
     }
 }

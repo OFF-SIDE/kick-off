@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import offside.auth.apiTypes.SocialLoginDto;
 import offside.auth.apiTypes.SocialSignupDto;
+import offside.auth.dto.UpdateUserInfoDto;
 import offside.auth.service.AuthService;
 import offside.response.ApiResponse;
 import offside.response.exception.CustomException;
@@ -73,6 +74,18 @@ public class AuthController {
         final var getUserData = authService.getAccountDataFromJwt(token);
         return ApiResponse.createSuccess(getUserData);
     }
+
+    // 내 정보 수정하기
+    @PostMapping("user/info/update")
+    @ResponseBody
+    public ApiResponse updateUserInfo(@RequestBody @Valid UpdateUserInfoDto updateUserInfoDto, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            throw new CustomException(bindingResult);
+        }
+        authService.updateUserInfo(updateUserInfoDto);
+        return ApiResponse.createSuccess("회원 정보 수정이 완료되었습니다.");
+    }
+
     
     
 }
