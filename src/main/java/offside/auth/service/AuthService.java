@@ -87,6 +87,7 @@ public class AuthService {
         final var nickname = claims.get("nickname", String.class);
         final var location = claims.get("location", String.class);
         final var category = claims.get("category", String.class);
+        final var profileImage = claims.get("profileImage", String.class);
         if(id == null || name == null || nickname == null || location == null || category == null){
             throw new CustomException(CustomExceptionTypes.TOKEN_UNAUTHORIZED_ERROR);
         }
